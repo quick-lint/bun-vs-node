@@ -4,15 +4,14 @@
   "scripts": {
     "package": "node ./build.mjs",
     "fmt": "prettier --write \"**/*.html\" \"**/*.mjs\"",
-    "test": "node run-tests.mjs"
+    "test": "node --test test/"
   },
   "devDependencies": {
     "prettier": "2.8.4",
-    "quick-lint-js-node-test-runner": "../../tools/quick-lint-js-node-test-runner/",
     "tar": "6.1.15"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=v18.8.0"
   },
   "dependencies": {
     "better-sqlite3": "8.5.2",
