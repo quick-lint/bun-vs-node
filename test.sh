@@ -18,7 +18,7 @@ set -u
     cd website-node-20
     yarn install --force
     (cd analytics && yarn install --force)
-    yarn test
+    node --test
     rm -rf www/
     yarn build
 )

@@ -3,8 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "package": "node ./build.mjs",
-    "fmt": "prettier --write \"**/*.html\" \"**/*.mjs\"",
-    "test": "node --test test/"
+    "fmt": "prettier --write \"**/*.html\" \"**/*.mjs\""
   },
   "devDependencies": {
     "prettier": "2.8.4",

@@ -2,8 +2,7 @@
   "scripts": {
     "build": "node --experimental-modules run-build.mjs www",
     "fmt": "prettier --write \"**/*.cjs\" \"**/*.css\" \"**/*.html\" \"**/*.js\" \"**/*.mjs\"",
-    "start": "node --experimental-modules run-server.mjs",
-    "test": "node --test test/"
+    "start": "node --experimental-modules run-server.mjs"
   },
   "engines": {
     "node": ">=v18.8.0"
