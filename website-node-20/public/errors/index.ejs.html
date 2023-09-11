@@ -1,0 +1,89 @@
+<!---{
+"title": "Errors and warnings for quick-lint-js",
+"description": "quick-lint-js provides helpful error messages."
+}--->
+
+<!DOCTYPE html>
+<!-- Copyright (C) 2020  Matthew "strager" Glazar -->
+<!-- See end of file for extended copyright information. -->
+<html lang="en">
+  <head>
+    <%- await include("../common-head.ejs.html") %>
+    <script>
+      //<%
+      let url = await import("url");
+
+      let {
+        documentationDirectoryPath,
+        loadErrorDocumentationFilesAsync,
+      } = await importFileAsync("../../src/error-documentation.mjs");
+
+      let documents = await loadErrorDocumentationFilesAsync(
+        documentationDirectoryPath
+      );
+      //%>
+    </script>
+    <link href="../main.css" rel="stylesheet" />
+    <style>
+      .table-of-contents a:link:not(:hover, :focus) {
+        text-decoration: none;
+      }
+    </style>
+  </head>
+
+  <body class="side-bar-nav">
+    <header><%- await include("../common-nav.ejs.html") %></header>
+
+    <script>
+      // Redirect users who visited the old page which used fragments:
+      // https://quick-lint-js.com/errors/#E0003 -> https://quick-lint-js.com/errors/E0003/
+      (function () {
+        let match = window.location.hash.match(/^#(E[0-9]{4})$/);
+        if (match !== null) {
+          let errorCode = match[1];
+          window.location = errorCode + "/";
+        }
+      })();
+    </script>
+
+    <main>
+      <h1>Error codes</h1>
+
+      <p>
+        quick-lint-js can find the following warnings and errors in your code:
+      </p>
+
+      <ul class="table-of-contents">
+        <% for (let doc of documents) { %>
+        <li>
+          <a href="<%= doc.titleErrorCode %>/"
+            ><%= doc.titleErrorCode %>: <%- doc.titleErrorDescriptionHTML %></a
+          >
+        </li>
+        <% } %>
+      </ul>
+    </main>
+
+    <footer><%- await include("../common-footer-nav.ejs.html") %></footer>
+  </body>
+</html>
+
+<!--
+quick-lint-js finds bugs in JavaScript programs.
+Copyright (C) 2020  Matthew "strager" Glazar
+
+This file is part of quick-lint-js.
+
+quick-lint-js is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+quick-lint-js is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with quick-lint-js.  If not, see <https://www.gnu.org/licenses/>.
+-->
