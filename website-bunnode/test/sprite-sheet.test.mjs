@@ -9,6 +9,7 @@ import {
   ExternalSpriteSheet,
   InlineSpriteSheet,
 } from "../src/sprite-sheet.mjs";
+import { describe, it, beforeEach, afterEach, expect } from "bun:test";
 
 describe("InlineSpriteSheet", () => {
   it("empty has empty inline data", async () => {

@@ -5,6 +5,7 @@ import fs from "fs";
 import http from "http";
 import os from "os";
 import path from "path";
+import { describe, it, beforeEach, afterEach, expect } from "bun:test";
 import { listenAsync, urlFromServerAddress } from "../src/net.mjs";
 import { makeServer } from "../src/server.mjs";
 
@@ -472,14 +473,17 @@ describe("server", () => {
   });
 
   describe(". components", () => {
-    it("/./ should 404 even if / works", async () => {
+    // FIXME(strager): The tests are marked 'todo' because Bun's HTTP client
+    // resolves . and .. components (meaning we can't properly test the server's
+    // behavior).
+    it.todo("/./ should 404 even if / works", async () => {
       fs.writeFileSync(path.join(wwwRootPath, "index.html"), "hello world");
 
       let response = await request("GET", "/./");
       expect(response.status).toBe(404);
     });
 
-    it("/./test.js should 404 even if /test.js works", async () => {
+    it.todo("/./test.js should 404 even if /test.js works", async () => {
       fs.writeFileSync(path.join(wwwRootPath, "test.js"), "hello()");
 
       let response = await request("GET", "/./test.js");
@@ -488,32 +492,38 @@ describe("server", () => {
   });
 
   describe(".. components", () => {
-    it("/../ should 404 even if / works", async () => {
+    it.todo("/../ should 404 even if / works", async () => {
       fs.writeFileSync(path.join(wwwRootPath, "index.html"), "hello world");
 
       let response = await request("GET", "/../");
       expect(response.status).toBe(404);
     });
 
-    it("/../test.js should 404 even if /test.js works", async () => {
+    it.todo("/../test.js should 404 even if /test.js works", async () => {
       fs.writeFileSync(path.join(wwwRootPath, "test.js"), "hello()");
 
       let response = await request("GET", "/../test.js");
       expect(response.status).toBe(404);
     });
 
-    it("/subdir/../test.js should 404 even if /subdir/ and /test.js both work", async () => {
-      fs.mkdirSync(path.join(wwwRootPath, "subdir"));
-      fs.writeFileSync(path.join(wwwRootPath, "test.js"), "hello()");
-      fs.writeFileSync(
-        path.join(wwwRootPath, "subdir", "index.html"),
-        "hello world"
-      );
-      fs.writeFileSync(path.join(wwwRootPath, "subdir", "test.js"), "hello()");
+    it.todo(
+      "/subdir/../test.js should 404 even if /subdir/ and /test.js both work",
+      async () => {
+        fs.mkdirSync(path.join(wwwRootPath, "subdir"));
+        fs.writeFileSync(path.join(wwwRootPath, "test.js"), "hello()");
+        fs.writeFileSync(
+          path.join(wwwRootPath, "subdir", "index.html"),
+          "hello world"
+        );
+        fs.writeFileSync(
+          path.join(wwwRootPath, "subdir", "test.js"),
+          "hello()"
+        );
 
-      let response = await request("GET", "/subdir/../test.js");
-      expect(response.status).toBe(404);
-    });
+        let response = await request("GET", "/subdir/../test.js");
+        expect(response.status).toBe(404);
+      }
+    );
   });
 
   describe("node_modules", () => {

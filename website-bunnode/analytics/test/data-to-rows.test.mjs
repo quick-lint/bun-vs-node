@@ -2,6 +2,7 @@
 // See end of file for extended copyright information.
 
 import { dataToRows } from "../src/data-to-rows.mjs";
+import { describe, it, expect } from "bun:test";
 
 describe("dataToRows", () => {
   it("two inputs with same key arrays", () => {

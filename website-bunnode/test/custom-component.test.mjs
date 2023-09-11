@@ -1,6 +1,8 @@
 // Copyright (C) 2020  Matthew "strager" Glazar
 // See end of file for extended copyright information.
 
+import { describe, it, expect } from "bun:test";
+import { expectToBeRejectedWithErrorAsync } from "./util.mjs";
 import { substituteCustomHTMLComponentsAsync } from "../src/custom-component.mjs";
 
 describe("custom HTML component", () => {
@@ -78,12 +80,12 @@ describe("custom HTML component", () => {
         return "";
       },
     };
-    await expectAsync(
+    await expectToBeRejectedWithErrorAsync(
       substituteCustomHTMLComponentsAsync(
         "<x-example>child</x-example>",
         components
       )
-    ).toBeRejectedWithError();
+    );
   });
 });
 

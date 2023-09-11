@@ -3,6 +3,7 @@
 
 import path from "node:path";
 import url from "node:url";
+import { describe, it, expect } from "bun:test";
 import {
   parseApacheTimestamp,
   parseLogFileAsync,

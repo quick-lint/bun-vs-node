@@ -197,6 +197,14 @@ class ToStringStream extends stream.Writable {
 }
 
 async function readPossiblyGZippedFileAsTextAsync(path) {
+  if (typeof Bun === "undefined") {
+    return await readPossiblyGZippedFileAsTextNodejsAsync(path);
+  } else {
+    return await readPossiblyGZippedFileAsTextBunAsync(path);
+  }
+}
+
+async function readPossiblyGZippedFileAsTextNodejsAsync(path) {
   let fileHandle = await fs.promises.open(path, "r");
   try {
     let magic = new Uint8Array(2);
@@ -219,6 +227,21 @@ async function readPossiblyGZippedFileAsTextAsync(path) {
     }
   } finally {
     await fileHandle.close();
+  }
+}
+
+async function readPossiblyGZippedFileAsTextBunAsync(path) {
+  let file = Bun.file(path);
+
+  let magicBuffer = await file.slice(0, 2).arrayBuffer();
+  let magic = new Uint8Array(magicBuffer);
+  let isGzipped = magic.length === 2 && magic[0] === 0x1f && magic[1] === 0x8b;
+
+  if (isGzipped) {
+    let decompressedBytes = Bun.gunzipSync(await file.arrayBuffer());
+    return new TextDecoder().decode(decompressedBytes);
+  } else {
+    return await file.text();
   }
 }
 

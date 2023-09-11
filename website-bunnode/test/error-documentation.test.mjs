@@ -10,6 +10,7 @@ import {
   flattenDiagnostics,
 } from "../src/error-documentation.mjs";
 import { DiagnosticSeverity } from "../wasm/quick-lint-js.js";
+import { describe, it, expect } from "bun:test";
 
 describe("error documentation", () => {
   it("error code from file path", () => {

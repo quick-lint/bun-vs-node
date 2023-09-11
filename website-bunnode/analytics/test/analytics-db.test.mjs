@@ -5,6 +5,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { AnalyticsDB } from "../src/analytics-db.mjs";
+import { describe, it, beforeEach, afterEach, expect } from "bun:test";
 
 describe("AnalyticsDB", () => {
   describe("file", () => {

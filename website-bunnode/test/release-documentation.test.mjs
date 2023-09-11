@@ -1,6 +1,7 @@
 // Copyright (C) 2020  Matthew "strager" Glazar
 // See end of file for extended copyright information.
 
+import { describe, it, expect } from "bun:test";
 import { releasesMarkdownToHTML } from "../src/release-documentation.mjs";
 
 describe("release documentation releasesMarkdownToHTML", () => {

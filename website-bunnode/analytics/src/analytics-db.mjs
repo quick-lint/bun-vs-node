@@ -1,7 +1,7 @@
 // Copyright (C) 2020  Matthew "strager" Glazar
 // See end of file for extended copyright information.
 
-import BetterSQLite3 from "better-sqlite3";
+import BunSQLite, { Database as BunSQLiteDatabase } from "bun:sqlite";
 
 let sql = String.raw;
 
@@ -9,7 +9,7 @@ export class AnalyticsDB {
   #sqlite3DB;
   #checkDownloadConflictQuery;
 
-  // Map<number, BetterSQLite3.Statement>
+  // Map<number, BunSQLite.Statement>
   #insertDownloadablesQueryCache = new Map();
 
   constructor(sqlite3DB) {
@@ -190,11 +190,11 @@ export class AnalyticsDB {
   }
 
   static fromFile(path) {
-    return new AnalyticsDB(new BetterSQLite3(path));
+    return new AnalyticsDB(new BunSQLiteDatabase(path));
   }
 
   static newInMemory() {
-    return new AnalyticsDB(new BetterSQLite3(":memory:"));
+    return new AnalyticsDB(new BunSQLiteDatabase(":memory:"));
   }
 
   close() {
@@ -220,37 +220,35 @@ export class AnalyticsDB {
     );
     if (insertDownloadablesQuery === undefined) {
       let urlPlaceholders = Array(downloads.length).fill("(?)").join(", ");
-      insertDownloadablesQuery = this.#sqlite3DB
-        .prepare(
-          sql`
+      insertDownloadablesQuery = this.#sqlite3DB.prepare(
+        sql`
             INSERT INTO downloadable (url)
             VALUES ${urlPlaceholders}
             ON CONFLICT (url) DO
             UPDATE SET url = url
             RETURNING id
           `
-        )
-        .pluck();
+      );
       this.#insertDownloadablesQueryCache.set(
         downloads.length,
         insertDownloadablesQuery
       );
     }
-    let downloadableIDs = insertDownloadablesQuery.all(
-      downloads.map((download) => download.url)
-    );
+    let downloadableIDs = insertDownloadablesQuery
+      .values(downloads.map((download) => download.url))
+      .map((row) => row[0]);
 
     for (let i = 0; i < downloads.length; ++i) {
       let { timestamp, url, downloaderIP, downloaderUserAgent } = downloads[i];
       let parameters = {
-        timestamp: timestampMSToS(timestamp),
-        downloader_ip: downloaderIP,
-        downloader_user_agent: downloaderUserAgent,
-        downloadable_id: downloadableIDs[i],
+        "@timestamp": timestampMSToS(timestamp),
+        "@downloader_ip": downloaderIP,
+        "@downloader_user_agent": downloaderUserAgent,
+        "@downloadable_id": downloadableIDs[i],
       };
       // TODO(strager): Put this query and the following query into a transation.
       let conflictResult = this.#checkDownloadConflictQuery.get(parameters);
-      if (conflictResult === undefined) {
+      if (conflictResult === undefined || conflictResult === null) {
         this.#sqlite3DB
           .prepare(
             sql`
@@ -304,8 +302,8 @@ export class AnalyticsDB {
                 `
               )
               .run({
-                downloader_user_agent: downloaderUserAgent,
-                download_id: conflictResult.download_id,
+                "@downloader_user_agent": downloaderUserAgent,
+                "@download_id": conflictResult.download_id,
               });
           } else {
             // The database has a row which is identical to the row we want to
@@ -364,8 +362,7 @@ export class AnalyticsDB {
           GROUP BY timestamp
         `
       )
-      .raw()
-      .all(urls);
+      .values(urls);
     let dates = [];
     let counts = [];
     for (let [timestamp, count] of rows) {
@@ -388,8 +385,7 @@ export class AnalyticsDB {
           GROUP BY download.timestamp_day
         `
       )
-      .raw()
-      .all(urls);
+      .values(urls);
     let dates = [];
     let counts = [];
     for (let [timestamp, count] of rows) {
@@ -437,13 +433,13 @@ export class AnalyticsDB {
           `
         )
         .run({
-          timestamp: statsForOneDay.statisticDate,
-          version: statsForOneDay.version,
-          average_rating: statsForOneDay.counts.averageRating ?? -1,
-          install_count: statsForOneDay.counts.installCount ?? 0,
-          uninstall_count: statsForOneDay.counts.uninstallCount ?? 0,
-          web_download_count: statsForOneDay.counts.webDownloadCount ?? 0,
-          web_page_views: statsForOneDay.counts.webPageViews ?? 0,
+          "@timestamp": statsForOneDay.statisticDate,
+          "@version": statsForOneDay.version,
+          "@average_rating": statsForOneDay.counts.averageRating ?? -1,
+          "@install_count": statsForOneDay.counts.installCount ?? 0,
+          "@uninstall_count": statsForOneDay.counts.uninstallCount ?? 0,
+          "@web_download_count": statsForOneDay.counts.webDownloadCount ?? 0,
+          "@web_page_views": statsForOneDay.counts.webPageViews ?? 0,
         });
     }
   }
@@ -459,8 +455,7 @@ export class AnalyticsDB {
           GROUP BY vscode_stats.timestamp_day
         `
       )
-      .raw()
-      .all();
+      .values();
     let dates = [];
     let counts = [];
     for (let [timestamp, count] of rows) {
@@ -481,8 +476,7 @@ export class AnalyticsDB {
           GROUP BY vscode_stats.timestamp_week
         `
       )
-      .raw()
-      .all();
+      .values();
     let dates = [];
     let counts = [];
     for (let [timestamp, count] of rows) {
