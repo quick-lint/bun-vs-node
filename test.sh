@@ -34,3 +34,14 @@ diff -r website-node-14/www/ website-node-20/www/
     bun run build
 )
 diff -r website-node-14/www/ website-bunnode/www/
+
+(
+    printf '===== testing website-bunbuns =====\n'
+    cd website-bunbuns
+    bun install --yarn
+    (cd analytics && bun install --yarn)
+    bun test
+    rm -rf www/
+    bun run build
+)
+diff -r website-node-14/www/ website-bunbuns/www/
