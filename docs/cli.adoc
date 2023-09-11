@@ -1,0 +1,395 @@
+// Copyright (C) 2020  Matthew "strager" Glazar
+// See end of file for extended copyright information.
+
+= quick-lint-js(1)
+:version: ﻿ \
+include::../version[lines=1]
+:mansource: quick-lint-js version {version}
+:toc:
+:reproducible:
+:stylesheet: ../main.css
+:linkcss:
+
+== Name
+
+quick-lint-js - find bugs in JavaScript programs
+
+== Synopsis
+
+*quick-lint-js* [*--output-format*=_format_] [<options>] _file_ [_file_...] +
+*quick-lint-js* *--lsp-server* [<options>] +
+*quick-lint-js* *--debug-apps* +
+*quick-lint-js* *--help* +
+*quick-lint-js* *--version*
+
+== Description
+
+*quick-lint-js* reads JavaScript files and reports syntax errors and other bugs.
+
+This command has three modes:
+
+*quick-lint-js* [<options>] _file_ [_file_...]::
+  Batch mode (default).
+  Check the given files, and report errors to the terminal (standard error).
+  *--output-format* can be used to customize how errors look.
+
+*quick-lint-js* --lsp-server::
+  LSP server mode.
+  Use this mode to integrate with code editors supporting LSP.
+  For more information, see
+ifdef::backend-html5[]
+  the link:../docs/lsp/[LSP server documentation].
+endif::[]
+ifndef::backend-html5[]
+  *quick-lint-js-lsp*(8).
+endif::[]
+
+*quick-lint-js* --debug-apps::
+*quick-lint-js* --help::
+*quick-lint-js* --version::
+  Information mode.
+  Prints information about quick-lint-js then exits.
+
+== Options
+
+*--output-format*=_format_::
+  Customize how errors are printed. _format_ is one of the following:
++
+--
+- *gnu-like* (default): a human-readable format similar to GCC.
+- *vim-qflist-json*: machine-readable JSON which can be given to Vim's _setqflist_ function.
+- *emacs-lisp*: Emacs Lisp association list format.
+
+Incompatible with *--lsp-server*.
+--
+
+*--diagnostic-hyperlinks*=_when_::
+  Control whether to hyperlink error codes or not.
+  This option is only used if *--output-format=gnu-like*.
+  _when_ is one of the following:
++
+--
+- *auto* (default): shows error codes as hyperlinks only if the error output is a terminal.
+On Windows it behaves like 'never'.
+- *always*: always shows error codes as hyperlinks.
+- *never*: never shows error codes as hyperlinks.
+
+Incompatible with *--lsp-server*.
+
+Added in quick-lint-js version 0.7.0.
+--
+
+*--vim-file-bufnr*=_number_::
+  Set the _bufnr_ property for errors printed with the *--output-format=vim-qflist-json* option.
++
+*--vim-file-bufnr* applies only to the next input file given in the command line.
+Therefore, if multiple input files are given, *--vim-file-bufnr* can be specified multiple times.
+
+*--path-for-config-search*=_path_::
+  For the following input file or *--stdin*, use _path_ as the file's path when
+ifdef::backend-manpage[]
+  searching for a configuration file (see *quick-lint-js.config*(5)).
+endif::[]
+ifdef::backend-html5[]
+  link:../config/[searching for a configuration file].
+endif::[]
++
+_path_ must be a syntactically-valid path.
+_path_ does not need to exist in the filesystem.
++
+*--path-for-config-search* applies only to the next input file given in the command line.
+Therefore, if multiple input files are given, *--path-for-config-search* can be specified multiple times.
+If *--path-for-config-search* is the last option, it has no effect.
++
+Incompatible with *--lsp-server*.
++
+Added in quick-lint-js version 0.4.0.
+
+[#config-file]
+*--config-file*=_file_::
+  Read configuration options from _file_ and apply them to input files which are given later in the command line.
+ifdef::backend-manpage[]
+  See *quick-lint-js.config*(5) for the format of configuration files.
+endif::[]
+ifdef::backend-html5[]
+  See the link:../config/[config docs] for the format of configuration files.
+endif::[]
++
+If *--config-file* is given twice, then the _file_ for the first *--config-file* option applies only to the input files between the two *--config-file* options, and the _file_ for the second *--config-file* option apples only to the input files after the second *--config-file* option.
+See the <<Example>> section for an example.
++
+ifdef::backend-manpage[]
+If *--config-file* is not given, *quick-lint-js* searches for a configuration file according to the rules specified in *quick-lint-js.config*(5).
+endif::[]
+ifdef::backend-html5[]
+If *--config-file* is not given, *quick-lint-js* link:../config/[searches for a configuration file].
+endif::[]
++
+Incompatible with *--lsp-server*.
++
+Added in quick-lint-js version 0.3.0.
+
+[#language]
+*--language*=_languageid_::
+  Interpret input files which are given later in the command line as if they were written in _languageid_. _languageid_ is one of the following:
++
+--
+* *default* (default): infer the _languageid_ from the file's extension:
+** *.js*: *javascript-jsx*
+** *.jsx*: *javascript-jsx*
+** (anything else): *javascript-jsx*
+* *javascript*: the latest ECMAScript standard with proposed features.
+* *javascript-jsx*: like *javascript* but with JSX (React) extensions.
+* *experimental-typescript*: the latest TypeScript version.
+(EXPERIMENTAL.
+Subject to change in future versions of quick-lint-js.)
+* *experimental-typescript-definition*: the latest TypeScript version (.d.ts file).
+(EXPERIMENTAL.
+Subject to change in future versions of quick-lint-js.)
+* *experimental-typescript-jsx*: like *experimental-typescript* but with JSX (React) extensions.
+(EXPERIMENTAL.
+Subject to change in future versions of quick-lint-js.)
+
+If *--language* is given twice, then the _languageid_ for the first *--language* option applies only to the input files between the two *--language* options, and the _languageid_ for the second *--language* option apples only to the input files after the second *--language* option.
+See the <<Example>> section for an example.
+
+If *--language* is the last option, it has no effect.
+
+Incompatible with *--lsp-server*.
+
+Added in quick-lint-js version 2.10.0.
+--
+
+*--exit-fail-on*=_errors_::
+  Cause *quick-lint-js* to exit with a non-zero exit code if any of the discovered errors is listed in _errors_.
++
+See the <<Error lists>> section for a description of the format for _errors_.
++
+Incompatible with *--lsp-server*.
+
+*--stdin*::
+  Read standard input as a JavaScript file.
++
+If neither *--config-file* nor *--path-for-config-search* is specified, an empty configuration file is assumed.
+If *--config-file* is specified, _file_ is used for linting standard input.
+If *--path-for-config-search* is specified and *--config-file* is not specified,
+ifdef::backend-manpage[]
+*quick-lint-js* searches for a configuration file according to the rules specified in *quick-lint-js.config*(5)
+endif::[]
+ifdef::backend-html5[]
+*quick-lint-js* link:../config/[searches for a configuration file]
+endif::[]
+starting from *--path-for-config-search*'s _path_.
++
+Incompatible with *--lsp-server*.
++
+Added in quick-lint-js version 0.3.0.
+
+*--lsp*::
+*--lsp-server*::
+  Run *quick-lint-js* in LSP server mode.
+  Use this mode to integrate with code editors supporting LSP.
+  For more information, see
+ifdef::backend-html5[]
+  the link:../docs/lsp/[LSP server documentation].
+endif::[]
+ifndef::backend-html5[]
+  *quick-lint-js-lsp*(8).
+endif::[]
++
+Incompatible with *--output-format*.
+
+*--snarky*::
+  Add spice to your failures.
+  This option makes error messages more interesting.
++
+Added in quick-lint-js version 2.5.0.
+
+*-h*::
+*--help*::
+  Print a help message and exit.
++
+The output format is not intended to be machine-parsable and may change in the future.
+
+*--debug-apps*::
+  Print a list of running quick-lint-js instances which have the debug app enabled.
++
+The output format is not intended to be machine-parsable and may change in the future.
++
+*--debug-apps* is only supported on Linux, macOS, and Windows.
+
+*-v*::
+*--version*::
+  Print version information and exit.
++
+The output format is not intended to be machine-parsable and may change in the future.
+
+[#error-lists]
+== Error lists
+
+Some options, such as *--exit-fail-on*, accept an error list.
+An error list is a comma-separated list of error code predicates and error category predicates.
+
+An error lists can contain any number of include, exclude, and default predicates.
+An include predicate is a '+' followed by the name of an error code or error category.
+An exclude predicate is a '-' followed by the name of an error code or error category.
+An default predicate is the name of an error code or error category with no sigil.
+
+An error list containing only include and exclude predicates modifies a default set of error codes.
+The default set is decided by the option, but is often the set of all error codes.
+An error list containing at least one default predicate empties the set of error codes, then treats the default predicates as if they were include predicates.
+
+The order of predicates within an error list does not matter.
+Included predicates are processed first, adding to the set of error codes.
+Excluded predicates are processed second, removing from the set of error codes.
+
+Error codes have the form *E0000*, where _0000_ is four decimal digits (0-9).
+
+The following error categories are supported:
+
+*all*::
+  All error codes.
+
+Example error lists:
+
+*E0102,E0110*::
+  Only error codes E0102 and E0110, excluding all other error codes.
+
+*-E0102*::
+  The default set of error codes, except for error code E0102.
+
+*+E0102*::
+  The default set of error codes, and also error code E0102.
+
+*all,-E0102*::
+  All error codes, except for error code E0102.
+
+*E0100,-E0100,+E0200*::
+  Only error code E0200, excluding all other error codes.
+
+*+E0200,-E0100,E0100*::
+  Only error code E0200, excluding all other error codes.
+
+== Exit status
+
+*0*::
+  Batch mode: Linting succeeded with no errors or warnings.
++
+LSP server mode: The LSP client requested that the server shut down.
+This exit status may change in the future.
+
+*non-0*::
+  Batch mode: Linting failed with at least one error or warning, or at least one _file_ could not be opened and read.
++
+The specific status code may change in the future.
+
+== Environment
+
+*LC_ALL*::
+*LC_MESSAGES*::
+  Change the language used for error and warning messages.
+  For example, set *LC_ALL=en* to see messages written in United States English.
+
+[#examples]
+== Example
+
+To lint a file called _lib/index.js_, writing error messages to the terminal:
+____
+[subs=+quotes]
+----
+$ *quick-lint-js* lib/index.js
+lib/index.js:1:20: error: variable used before declaration: language [E0058]
+lib/index.js:2:7: note: variable declared here [E0058]
+lib/index.js:3:1: error: assignment to const variable [E0003]
+lib/index.js:1:7: note: const variable declared here [E0003]
+lib/index.js:5:25: warning: use of undeclared variable: ocupation [E0057]
+----
+____
+
+To lint three files, writing machine-readable messages to _/tmp/vim-qflist.json_:
+____
+[subs=+quotes]
+----
+$ *quick-lint-js* --output-format=vim-qflist-json \
+    --vim-bufnr=3 lib/pizza-dough.js \
+    --vim-bufnr=4 lib/pizza-sauce.js \
+    --vim-bufnr=6 lib/pineapple.js \
+    >/tmp/vim-qflist.json
+----
+____
+Errors for _lib/pizza-dough.js_ will include _"bufnr":3_ in the output and errors for _lib/pineapple.js_ will include _"bufnr":6_.
+
+To lint a file called _bad.js_, but don't fail on use-of-undeclared-variable errors:
+____
+[subs=+quotes]
+----
+$ *quick-lint-js* --exit-fail-on=-E0057 bad.js
+bad.js:5:25: warning: use of undeclared variable: $ [E0057]
+$ echo $?
+0
+----
+____
+
+To lint source files with a strict configuration file and lint test files with a lax configuration file:
+____
+[subs=+quotes]
+----
+$ *quick-lint-js* \
+    --config-file strict-quick-lint-js.config src/index.js src/helpers.js \
+    --config-file lax-quick-lint-js.config test/test-app.js
+----
+____
+
+To lint a temporary file, but use the configuration file of a project:
+____
+[subs=+quotes]
+----
+$ *quick-lint-js* --path-for-config-search=src/server.js /tmp/unsaved12m1uz.js
+/tmp/unsaved12m1uz.js:12:5: warning: use of undeclared variable: document [E0057]
+----
+____
+
+To lint _.js_ files as JavaScript, and _.jsx_ files as JavaScript+JSX:
+____
+[subs=+quotes]
+----
+$ *quick-lint-js* \
+    --language javascript *.js \
+    --language javascript-jsx *.jsx
+----
+____
+
+To lint standard input as JavaScript:
+____
+[subs=+quotes]
+----
+$ *quick-lint-js* --language javascript --stdin
+----
+____
+
+ifdef::backend-manpage[]
+
+== See also
+
+*eslint*(1)
+*quick-lint-js.config*(5)
+
+endif::backend-manpage[]
+
+// quick-lint-js finds bugs in JavaScript programs.
+// Copyright (C) 2020  Matthew "strager" Glazar
+//
+// This file is part of quick-lint-js.
+//
+// quick-lint-js is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// quick-lint-js is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with quick-lint-js.  If not, see <https://www.gnu.org/licenses/>.

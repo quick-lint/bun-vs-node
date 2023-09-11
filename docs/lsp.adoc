@@ -1,0 +1,173 @@
+// Copyright (C) 2020  Matthew "strager" Glazar
+// See end of file for extended copyright information.
+
+= quick-lint-js-lsp(8)
+:version: ﻿ \
+include::../version[lines=1]
+:mansource: quick-lint-js version {version}
+:toc:
+:reproducible:
+:stylesheet: ../main.css
+:linkcss:
+:table-caption!:
+
+ifdef::backend-manpage[]
+
+== Name
+
+quick-lint-js-lsp - LSP protocol for *quick-lint-js*(1)
+
+endif::[]
+
+== Description
+
+quick-lint-js supports the Language Server Protocol.
+This allows code editors to ask quick-lint-js for diagnostics which can be displayed inline.
+
+To start the quick-lint-js LSP server, run the
+ifdef::backend-manpage[]
+*quick-lint-js*(1) program
+endif::[]
+ifdef::backend-html5[]
+link:../../cli/[quick-lint-js CLI]
+endif::[]
+ifndef::backend-html5,backend-manpage[]
+quick-lint-js CLI
+endif::[]
+with the *--lsp-server* option.
+The server accepts JSON-RPC+LSP messages from the editor via standard input, and sends JSON-RPC messages to the editor via standard output.
+
+== Supported LSP features
+
+quick-lint-js can receive and handle the following LSP requests and
+notifications:
+
+* Basic lifecycle
+** `exit`
+** `initialize`
+** `initialized`
+** `shutdown`
+* Document sync
+** `textDocument/didClose`
+** `textDocument/didOpen`
+** `textDocument/didChange`
+
+quick-lint-js sends the following LSP requests and notifications:
+
+* `textDocument/publishDiagnostics`
+* `window/showMessage`
+* `workspace/configuration`
+
+== Document languageId
+
+quick-lint-js uses `languageId` from a `textDocument/didOpen` notification to determine the language of that LSP document according to the following table:
+
+.quick-lint-js's interpretation of languageId
+[%autowidth,%header,cols="h,"]
+|===
+|LSP languageId
+|Equivalent
+ifdef::backend-html5[]
+link:../../cli/#language[*--language=*] +
+endif::[]
+ifndef::backend-html5[]
+*--language* +
+endif::[]
+command-line option
+
+|`javascript`
+|`javascript-jsx`
+
+|`javascriptreact`
+|`javascript-jsx`
+
+|`js-jsx`
+|`javascript-jsx`
+
+|`js`
+|`javascript-jsx`
+
+|`tsx`
+|`experimental-typescript-jsx`
+
+|`typescript`
+|See below
+
+|`typescriptsource`
+|`experimental-typescript`
+
+|`typescriptdefinition`
+|`experimental-typescript-definition`
+
+|`typescriptreact`
+|`experimental-typescript-jsx`
+
+|(any)
+|See below
+|===
+
+If the `languageId` is equal to `typescript`, then quick-lint-js inspects the base name of that document's URI to determine the language of that document:
+
+* If the base name contains ".d.", then quick-lint-js interprets the document as if `languageId` was instead `typescriptdefinition`.
+* Otherwise, if the base name ends with ".tsx", then quick-lint-js interprets the document as if `languageId` was instead `typescriptreact`.
+* Otherwise, quick-lint-js interprets the document as if `languageId` was instead `typescriptsource`.
+
+quick-lint-js interprets documents with a base name of `quick-lint-js.config` as a JSON config file.
+The document's language ID is ignored.
+See *quick-lint-js.config*(5) for more details.
+
+== Configuration
+
+The quick-lint-js LSP server accepts the following configuration settings,
+communicated through `workspace/configuration`:
+
+`quick-lint-js.tracing-directory`::
+  Log raw LSP messages between the editor and quick-lint-js.
+  A timestamped subdirectory is created inside the tracing directory containing binary log files.
+  If null or an empty string, tracing is disabled.
+
+It is also possible to configure quick-lint-js using the `initialize` request.
+To do so, set `initializationOptions` to an object containing a `configuration` object containing the settings.
+For example, the following `initialize` request sets `quick-lint-js.tracing-directory`:
+
+    {
+      "jsonrpc": "2.0",
+      "id": 1,
+      "method": "initialize",
+      "params": {
+        "processId": null,
+        "rootUri": null,
+        "capabilities": {},
+        "initializationOptions": {
+          "configuration": {
+            "quick-lint-js.tracing-directory": "/tmp/quick-lint-js-logs"
+          }
+        }
+      }
+    }
+
+ifdef::backend-manpage[]
+
+== See also
+
+*quick-lint-js*(1)
+
+endif::backend-manpage[]
+
+// quick-lint-js finds bugs in JavaScript programs.
+// Copyright (C) 2020  Matthew "strager" Glazar
+//
+// This file is part of quick-lint-js.
+//
+// quick-lint-js is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// quick-lint-js is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with quick-lint-js.  If not, see <https://www.gnu.org/licenses/>.
