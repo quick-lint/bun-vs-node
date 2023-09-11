@@ -1,0 +1,92 @@
+<!---{
+"title": "How to install quick-lint-js",
+"description": "Install quick-lint-js on Linux, macOS, Windows, VS Code and many more!"
+}--->
+
+<!DOCTYPE html>
+<!-- Copyright (C) 2020  Matthew "strager" Glazar -->
+<!-- See end of file for extended copyright information. -->
+<html lang="en">
+  <head>
+    <%- await include("../common-head.ejs.html") %>
+    <link href="../main.css" rel="stylesheet" />
+  </head>
+  <body class="side-bar-nav">
+    <header><%- await include("../common-nav.ejs.html") %></header>
+
+    <main>
+      <h1>Install quick-lint-js</h1>
+      <p>
+        Latest version: <%= qljsVersionInfo.version %> (released
+        <time datetime="<%= qljsVersionInfo.releaseDate %>"
+          ><%= new Intl.DateTimeFormat("en-US", {dateStyle: "long", timeZone:
+          "UTC"}).format(new Date(qljsVersionInfo.releaseDate)) %></time
+        >)<br /><a href="../releases/">Previous versions</a>
+      </p>
+
+      <p>Choose which editor you want to install quick-lint-js for:</p>
+      <ul>
+        <li>
+          <a href="vscode/"
+            ><qljs-icon name="vscode" size="19" /> Visual Studio Code</a
+          >
+        </li>
+        <li>
+          <a href="vscodium/"
+            ><qljs-icon name="open-vsx" size="19" /> VSCodium</a
+          >
+        </li>
+        <li>
+          <a href="vim/"><qljs-icon name="vim" size="19" /> Vim</a>
+        </li>
+        <li>
+          <a href="neovim/"><qljs-icon name="neovim" size="19" /> Neovim</a>
+        </li>
+        <li>
+          <a href="sublime/"
+            ><qljs-icon name="sublime-text" size="19" /> Sublime Text</a
+          >
+        </li>
+        <li>
+          <a href="emacs/"><qljs-icon name="emacs" size="19" /> Emacs</a>
+        </li>
+        <li>
+          <a href="kate/"><qljs-icon name="kate" size="19" /> Kate</a>
+        </li>
+        <li>
+          <a href="cli/"
+            ><qljs-icon name="cli-and-lsp-server" size="19" />
+            <abbr title="command line interface">CLI</abbr> &amp;
+            <abbr title="language server protocol">LSP</abbr> server</a
+          >
+        </li>
+      </ul>
+    </main>
+
+    <footer><%- await include("../common-footer-nav.ejs.html") %></footer>
+  </body>
+</html>
+
+<!--
+quick-lint-js finds bugs in JavaScript programs.
+Copyright (C) 2020  Matthew "strager" Glazar
+
+This file is part of quick-lint-js.
+
+quick-lint-js is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+quick-lint-js is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with quick-lint-js.  If not, see <https://www.gnu.org/licenses/>.
+-->
+<!--
+Other files may have different copyright and may be licensed under different
+licenses. See license/ for details.
+-->

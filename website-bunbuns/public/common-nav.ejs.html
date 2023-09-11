@@ -1,0 +1,362 @@
+<%#
+<!-- Copyright (C) 2020  Matthew "strager" Glazar -->
+<!-- See end of file for extended copyright information. -->
+%>
+
+<script>
+  //<%
+  let assert = await import("assert");
+  let ejs = await import("ejs");
+  let url = await import("url");
+  let { html } = await importFileAsync("../src/html-tag.mjs");
+
+  let navigationPages = [
+    {
+      uri: "/install/",
+      title: "Install",
+      subpages: [
+        { uri: "/install/emacs/", title: "Emacs", hidden: true },
+        {
+          uri: "/install/emacs/arch-linux/",
+          title: "Emacs Arch Linux",
+          hidden: true,
+        },
+        { uri: "/install/emacs/chocolatey/", title: "Emacs Choco", hidden: true },
+        { uri: "/install/emacs/configure/", title: "Set up Emacs", hidden: true },
+        { uri: "/install/emacs/debian/", title: "Emacs Debian", hidden: true },
+        { uri: "/install/emacs/homebrew/", title: "Emacs Homebrew", hidden: true },
+        { uri: "/install/emacs/nix/", title: "Emacs Nix", hidden: true },
+        { uri: "/install/emacs/npm-posix/", title: "Emacs npm", hidden: true },
+        { uri: "/install/emacs/npm-windows/", title: "Emacs npm", hidden: true },
+        { uri: "/install/emacs/scoop/", title: "Emacs Scoop", hidden: true },
+        { uri: "/install/emacs/static-linux/", title: "Emacs Linux", hidden: true },
+        { uri: "/install/emacs/static-macos/", title: "Emacs macOS", hidden: true },
+        {
+          uri: "/install/emacs/static-windows/",
+          title: "Emacs Windows",
+          hidden: true,
+        },
+        { uri: "/install/emacs/winget/", title: "Emacs winget", hidden: true },
+        { uri: "/install/kate/", title: "Kate", hidden: true },
+        {
+          uri: "/install/kate/arch-linux/",
+          title: "Kate Arch Linux",
+          hidden: true,
+        },
+        { uri: "/install/kate/chocolatey/", title: "Kate Choco", hidden: true },
+        { uri: "/install/kate/debian/", title: "Kate Debian", hidden: true },
+        { uri: "/install/kate/homebrew/", title: "Kate Homebrew", hidden: true },
+        { uri: "/install/kate/nix/", title: "Kate Nix", hidden: true },
+        { uri: "/install/kate/npm-posix/", title: "Kate npm", hidden: true },
+        { uri: "/install/kate/npm-windows/", title: "Kate npm", hidden: true },
+        { uri: "/install/kate/scoop/", title: "Kate Scoop", hidden: true },
+        { uri: "/install/kate/static-linux/", title: "Kate Linux", hidden: true },
+        { uri: "/install/kate/static-macos/", title: "Kate macOS", hidden: true },
+        {
+          uri: "/install/kate/static-windows/",
+          title: "Kate Windows",
+          hidden: true,
+        },
+        { uri: "/install/kate/winget/", title: "Kate winget", hidden: true },
+        { uri: "/install/neovim/", title: "Neovim", hidden: true },
+        {
+          uri: "/install/neovim/arch-linux/",
+          title: "Neovim Arch Linux",
+          hidden: true,
+        },
+        {
+          uri: "/install/neovim/chocolatey/",
+          title: "Neovim Choco",
+          hidden: true,
+        },
+        {
+          uri: "/install/neovim/debian/",
+          title: "Neovim Debian",
+          hidden: true,
+        },
+        {
+          uri: "/install/neovim/homebrew/",
+          title: "Neovim Homebrew",
+          hidden: true,
+        },
+        { uri: "/install/neovim/nix/", title: "Neovim Nix", hidden: true },
+        {
+          uri: "/install/neovim/npm-posix/",
+          title: "Neovim npm",
+          hidden: true,
+        },
+        {
+          uri: "/install/neovim/npm-windows/",
+          title: "Neovim npm",
+          hidden: true,
+        },
+        {
+          uri: "/install/neovim/scoop/",
+          title: "Neovim Scoop",
+          hidden: true,
+        },
+        {
+          uri: "/install/neovim/static-linux/",
+          title: "Neovim Linux",
+          hidden: true,
+        },
+        {
+          uri: "/install/neovim/static-macos/",
+          title: "Neovim macOS",
+          hidden: true,
+        },
+        {
+          uri: "/install/neovim/static-windows/",
+          title: "Neovim Windows",
+          hidden: true,
+        },
+        {
+          uri: "/install/neovim/winget/",
+          title: "Neovim winget",
+          hidden: true,
+        },
+        { uri: "/install/sublime/", title: "Sublime", hidden: true },
+        {
+          uri: "/install/sublime/arch-linux/",
+          title: "Sublime Arch Linux",
+          hidden: true,
+        },
+        {
+          uri: "/install/sublime/chocolatey/",
+          title: "Sublime Choco",
+          hidden: true,
+        },
+        {
+          uri: "/install/sublime/debian/",
+          title: "Sublime Debian",
+          hidden: true,
+        },
+        {
+          uri: "/install/sublime/homebrew/",
+          title: "Sublime Homebrew",
+          hidden: true,
+        },
+        { uri: "/install/sublime/nix/", title: "Sublime Nix", hidden: true },
+        {
+          uri: "/install/sublime/scoop/",
+          title: "Sublime Scoop",
+          hidden: true,
+        },
+        {
+          uri: "/install/sublime/static-linux/",
+          title: "Sublime Linux",
+          hidden: true,
+        },
+        {
+          uri: "/install/sublime/static-macos/",
+          title: "Sublime macOS",
+          hidden: true,
+        },
+        {
+          uri: "/install/sublime/static-windows/",
+          title: "Sublime Windows",
+          hidden: true,
+        },
+        {
+          uri: "/install/sublime/winget/",
+          title: "Sublime winget",
+          hidden: true,
+        },
+        { uri: "/install/vscode/", title: "VS Code", hidden: true },
+        { uri: "/install/vscodium/", title: "VSCodium", hidden: true },
+        { uri: "/install/vim/", title: "Vim", hidden: true },
+        {
+          uri: "/install/vim/arch-linux/",
+          title: "Vim Arch Linux",
+          hidden: true,
+        },
+        { uri: "/install/vim/chocolatey/", title: "Vim Choco", hidden: true },
+        { uri: "/install/vim/debian/", title: "Vim Debian", hidden: true },
+        { uri: "/install/vim/homebrew/", title: "Vim Homebrew", hidden: true },
+        { uri: "/install/vim/nix/", title: "Vim Nix", hidden: true },
+        { uri: "/install/vim/npm-posix/", title: "Vim npm", hidden: true },
+        { uri: "/install/vim/npm-windows/", title: "Vim npm", hidden: true },
+        { uri: "/install/vim/scoop/", title: "Vim Scoop", hidden: true },
+        { uri: "/install/vim/static-linux/", title: "Vim Linux", hidden: true },
+        { uri: "/install/vim/static-macos/", title: "Vim macOS", hidden: true },
+        {
+          uri: "/install/vim/static-windows/",
+          title: "Vim Windows",
+          hidden: true,
+        },
+        { uri: "/install/vim/winget/", title: "Vim winget", hidden: true },
+        { uri: "/install/cli/", title: "CLI", hidden: true },
+        {
+          uri: "/install/cli/arch-linux/",
+          title: "CLI Arch Linux",
+          hidden: true,
+        },
+        { uri: "/install/cli/chocolatey/", title: "CLI Choco", hidden: true },
+        { uri: "/install/cli/debian/", title: "CLI Debian", hidden: true },
+        { uri: "/install/cli/homebrew/", title: "CLI Homebrew", hidden: true },
+        { uri: "/install/cli/nix/", title: "CLI Nix", hidden: true },
+        { uri: "/install/cli/npm/", title: "CLI npm", hidden: true },
+        { uri: "/install/cli/scoop/", title: "CLI Scoop", hidden: true },
+        { uri: "/install/cli/static-linux/", title: "CLI Linux", hidden: true },
+        { uri: "/install/cli/static-macos/", title: "CLI macOS", hidden: true },
+        {
+          uri: "/install/cli/static-windows/",
+          title: "CLI Windows",
+          hidden: true,
+        },
+        { uri: "/install/cli/winget/", title: "CLI winget", hidden: true },
+        { uri: "/releases/", title: "Releases" },
+      ],
+    },
+    { uri: "/demo/", title: "Try online", sideBarOnly: true},
+    {
+      uri: "/docs/",
+      title: "Docs",
+      subpages: [
+        { uri: "/errors/", title: "Errors" },
+        { pattern: /^\/errors\/(E[0-9]+)\/$/, hidden: true, makeTitle(uri, match) {
+          return match[1];
+        } },
+        { uri: "/cli/", title: "CLI" },
+        { uri: "/config/", title: "Config" },
+        { uri: "/docs/lsp/", title: "LSP" },
+        {
+          uri: "/contact/",
+          title: "Contact",
+        },
+        { uri: "/crash-report/", title: "Crash report", hidden: true },
+      ],
+    },
+    { uri: "/benchmarks/", title: "Benchmarks" },
+    {
+      uri: "/contribute/",
+      title: "Contribute",
+      subpages: await loadContributeSubpagesIfNeededAsync(),
+    },
+    {
+      uri: "/blog/",
+      title: "Blog",
+      subpages: await loadBlogSubpagesIfNeededAsync(),
+    },
+  ];
+
+  function pageLinkHTML(page) {
+    if (typeof page.uri === "string") {
+      let classes = "";
+      if (page.sideBarOnly) {
+        classes += " side-bar-only";
+      }
+      let titleHTML = ejs.escapeXML(page.title);
+      if (page.uri === currentURI) {
+        return html`<li class="${classes}"><span aria-current="page">${titleHTML}</span></li>`;
+      } else {
+        return html`<li class="${classes}">
+          <a href="${ejs.escapeXML(makeRelativeURI(page.uri))}">${titleHTML}</a>
+        </li>`;
+      }
+    }
+    if (page.pattern instanceof RegExp) {
+      assert.match(currentURI, page.pattern, "Linkifying pattern subpages only supported for current URI");
+      let titleHTML = ejs.escapeXML(page.makeTitle(currentURI, currentURI.match(page.pattern)));
+      return html`<li><span aria-current="page">${titleHTML}</span></li>`;
+    }
+    throw new Error("Malformed page or subpage: " + JSON.stringify(subpage));
+  }
+
+  async function loadBlogSubpagesIfNeededAsync() {
+    if (currentURI.startsWith("/blog/")) {
+      let { loadBlogPostsAsync } = await importFileAsync("./blog/index.mjs");
+      let blogPosts = await loadBlogPostsAsync();
+      return blogPosts.map(post => ({
+        uri: `/blog/${post.dir}/`,
+        title: post.meta.navTitle ?? post.meta.title,
+        hidden: true,
+      }));
+    } else {
+      return [];
+    }
+  }
+
+  async function loadContributeSubpagesIfNeededAsync() {
+    if (currentURI.startsWith("/contribute/")) {
+      let { loadNavSubpagesAsync } = await importFileAsync("./contribute/index.mjs");
+      return await loadNavSubpagesAsync();
+    } else {
+      return [];
+    }
+  }
+
+  function isOnPageOrSubpage(page) {
+    return page.uri === currentURI || page.subpages.some(subpage => isOnSubpage(subpage));
+  }
+
+  function isOnSubpage(subpage) {
+    if (typeof subpage.uri === "string") {
+        return subpage.uri === currentURI;
+    }
+    if (subpage.pattern instanceof RegExp) {
+      return currentURI.match(subpage.pattern);
+    }
+    throw new Error("Malformed subpage: " + JSON.stringify(subpage));
+  }
+  //%>
+</script>
+
+<% if (currentURI === "/") { %>
+<h1 id="title">quick-lint-js</h1>
+<% } else { %>
+<div id="title"><a href="<%= makeRelativeURI('/') %>">quick-lint-js</a></div>
+<% } %>
+<p class="tag-line">Find bugs in JavaScript programs.</p>
+<% if (currentURI !== "/") { %><a
+  href="<%= makeRelativeURI('/') %>"
+  class="mascot"
+  ><% } %><img
+    class="mascot"
+    src="<%= makeRelativeURI('/dusty.svg') %>"
+    title="Dusty, the quick-lint-js mascot"
+    alt=""
+    width="111"
+    height="86"
+  /><% if (currentURI !== "/") { %></a
+><% } %>
+
+<nav class="main-nav">
+  <ul>
+    <% if (currentURI !== "/") { %>
+    <li class="side-bar-only">
+      <a href="<%= makeRelativeURI('/') %>">Home</a>
+    </li>
+    <% } %> <% for (let page of navigationPages) { %> <% if (page.subpages) { %>
+    <%- pageLinkHTML(page).replace("<" + "/li>", "") %> <% if
+    (isOnPageOrSubpage(page)) { %>
+    <ul>
+      <% for (let subpage of page.subpages) { %> <% if (!subpage.hidden ||
+      isOnSubpage(subpage)) { %> <%- pageLinkHTML(subpage) %> <% } %> <% } %>
+    </ul>
+    <% } %> <%- "<" + "/li>" %> <% } else { %> <%- pageLinkHTML(page) %> <% } %>
+    <% } %>
+  </ul>
+</nav>
+
+<%#
+<!--
+quick-lint-js finds bugs in JavaScript programs.
+Copyright (C) 2020  Matthew "strager" Glazar
+
+This file is part of quick-lint-js.
+
+quick-lint-js is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+quick-lint-js is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with quick-lint-js.  If not, see <https://www.gnu.org/licenses/>.
+-->
+%>
