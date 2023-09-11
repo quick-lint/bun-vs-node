@@ -1,0 +1,66 @@
+<%#
+<!-- Copyright (C) 2020  Matthew "strager" Glazar -->
+<!-- See end of file for extended copyright information. -->
+%>
+
+<meta charset="utf-8" />
+<meta content="width=device-width, initial-scale=1" name="viewport" />
+<link
+  rel="icon"
+  type="image/png"
+  sizes="16x16"
+  href="<%= makeRelativeURI('/favicon-16x16.png') %>"
+/>
+<link
+  rel="icon"
+  type="image/png"
+  sizes="32x32"
+  href="<%= makeRelativeURI('/favicon-32x32.png') %>"
+/>
+<link rel="canonical" href="https://quick-lint-js.com<%= currentURI %>" />
+<meta property="og:url" content="https://quick-lint-js.com<%= currentURI %>" />
+
+<title><%= collapseInteriorWhitespace(locals.title ?? meta.title) %></title>
+<meta
+  property="og:title"
+  content="<%= collapseInteriorWhitespace(locals.title ?? meta.title) %>"
+/>
+<% if (typeof locals.description !== 'undefined' || typeof meta.description !==
+'undefined') { %>
+<meta
+  name="description"
+  content="<%= collapseInteriorWhitespace(locals.description ?? meta.description) %>"
+/>
+<meta
+  property="og:description"
+  content="<%= collapseInteriorWhitespace(locals.description ?? meta.description) %>"
+/>
+<% } %> <%# NOTE(strager): Only absolute URIs seem to work with Discord. %>
+<meta
+  property="og:image"
+  content="<%= locals.image ?? meta.image ?? '/vscode-demo-small.gif' %>"
+/>
+<meta name="theme-color" content="#a76851" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary_large_image" />
+<%#
+<!--
+quick-lint-js finds bugs in JavaScript programs.
+Copyright (C) 2020  Matthew "strager" Glazar
+
+This file is part of quick-lint-js.
+
+quick-lint-js is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+quick-lint-js is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with quick-lint-js.  If not, see <https://www.gnu.org/licenses/>.
+-->
+%>
