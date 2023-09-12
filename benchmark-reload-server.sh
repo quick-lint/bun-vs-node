@@ -26,5 +26,5 @@ cc -O3 benchmark-reload.c -o benchmark-reload
   'Server running:' \
   '' \
   100 \
-  sh -c 'cd website-bunbuns && bun run --watch run-server-worker.mjs' \
+  sh -c 'cd website-bunbuns && bun --bun run --watch run-server-worker.mjs' \
   >benchmark-reload-server-bunbuns.csv

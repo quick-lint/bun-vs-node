@@ -29,7 +29,7 @@ diff -r website-node-14/www/ website-node-20/www/
     cd website-bunmine
     yarn install --force
     (cd analytics && yarn install --force)
-    if ! bun run run-tests.mjs; then
+    if ! bun --bun run run-tests.mjs; then
         # HACK(strager): Jasmine doesn't work right with Bun. See also hack in
         # tools/quick-lint-js-node-test-runner/index.js.
         if [[ "${?}" -ne 3 ]]; then
@@ -37,7 +37,7 @@ diff -r website-node-14/www/ website-node-20/www/
         fi
     fi
     rm -rf www/
-    bun run build
+    bun --bun run build
 )
 diff -r website-node-14/www/ website-bunmine/www/
 
@@ -48,7 +48,7 @@ diff -r website-node-14/www/ website-bunmine/www/
     (cd analytics && yarn install --force)
     bun test
     rm -rf www/
-    bun run build
+    bun --bun run build
 )
 diff -r website-node-14/www/ website-bunnode/www/
 
@@ -59,6 +59,6 @@ diff -r website-node-14/www/ website-bunnode/www/
     (cd analytics && bun install --yarn)
     bun test
     rm -rf www/
-    bun run build
+    bun --bun run build
 )
 diff -r website-node-14/www/ website-bunbuns/www/
