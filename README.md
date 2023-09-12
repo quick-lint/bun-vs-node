@@ -10,3 +10,6 @@ different runtimes:
 | `website-bunmine` | Bun     | Yarn            | Jasmine        | mostly uses Node.js APIs                                                             |
 | `website-bunnode` | Bun     | Yarn            | bun test       | mostly uses Node.js APIs                                                             |
 | `website-bunbuns` | Bun     | Bun             | bun test       | uses Bun APIs in first-party code                                                    |
+
+`website-node-14/tools/check-links.mjs` uses Node.js's http and https modules.
+`website-node-20/tools/check-links.mjs` uses `fetch`.

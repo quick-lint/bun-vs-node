@@ -379,88 +379,40 @@ function removeDuplicates(array) {
   return [...new Set(array)];
 }
 
-// Poorly-implemented version of 'fetch' for older versions of Node.js.
-function httpRequestAsync(
+async function httpRequestAsync(
   url,
   {
     method = "GET",
-    redirect = "never",
+    redirect = "manual",
     headers = {},
     timeoutMilliseconds = null,
   }
 ) {
-  return new Promise((resolve, reject) => {
-    let httpModule = new URL(url).protocol === "https:" ? https : http;
-    let clientRequest = httpModule.request(url, {
-      method: method,
-      timeout: timeoutMilliseconds === null ? undefined : timeoutMilliseconds,
-    });
-    clientRequest.on("error", (error) => {
-      reject(error);
-    });
-    clientRequest.on("response", (response) => {
-      let isRedirectResponse = [301, 302, 307, 308].includes(
-        response.statusCode
-      );
-      if (isRedirectResponse && redirect === "follow") {
-        let location = response.headers.location;
-        if (!location) {
-          reject(
-            new Error(
-              `received status ${response.status} but no location header`
-            )
-          );
-          return;
-        }
-        // TODO(strager): Impose a redirect depth limit.
-        // TODO(strager): timeoutMilliseconds should apply to the entire fetch,
-        // not just one subfetch.
-        let newURL = new URL(location, url).toString();
-        if (logRedirects) {
-          console.log(`Redirecting from ${url} to ${newURL}...`);
-        }
-        httpRequestAsync(newURL, {
-          method: method,
-          redirect: redirect,
-          timeoutMilliseconds: timeoutMilliseconds,
-        }).then(resolve, reject);
-        return;
-      }
+  let timeout = new AbortController();
+  let timeoutID = null;
+  if (timeoutMilliseconds !== null) {
+    timeoutID = setTimeout(() => timeout.abort(), timeoutMilliseconds);
+  }
 
-      response.setEncoding("utf8");
-      let textPromise = new Promise((resolveText, rejectText) => {
-        let body = "";
-        response.on("data", (chunk) => {
-          body += chunk;
-        });
-        response.on("error", (error) => {
-          rejectText(error);
-        });
-        response.on("end", () => {
-          resolveText(body);
-        });
-      });
-
-      resolve({
-        status: response.statusCode,
-        url: url,
-        contentType: response.headers["content-type"],
-        get ok() {
-          return 200 <= this.status && this.status < 400;
-        },
-        async text() {
-          return await textPromise;
-        },
-      });
-    });
-
-    for (let headerName in headers) {
-      if (Object.hasOwnProperty.call(headers, headerName)) {
-        clientRequest.setHeader(headerName, headers[headerName]);
-      }
-    }
-    clientRequest.end();
+  let response = await fetch(url, {
+    method,
+    redirect,
+    headers,
+    signal: timeout.signal,
   });
+  let text = await response.text();
+  clearTimeout(timeoutID);
+  return {
+    status: response.status,
+    url: url,
+    contentType: response.headers.get("content-type"),
+    get ok() {
+      return response.ok;
+    },
+    async text() {
+      return text;
+    },
+  };
 }
 
 let isRunningAsScript = process.argv[1] === url.fileURLToPath(import.meta.url);
