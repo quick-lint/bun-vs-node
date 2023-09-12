@@ -3,11 +3,19 @@
 // with Hyperfine.
 
 #include <errno.h>
-#include <pty.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+
+#if defined(__APPLE__)
+#include <util.h>
+#endif
+
+#if defined(__linux__)
+#include <pty.h>
+#endif
 
 int main(int argc, char** argv) {
   int master_fd;
@@ -25,7 +33,7 @@ int main(int argc, char** argv) {
     // parent
     {
       char buffer[1024*1024];
-read_again:
+read_again:;
       ssize_t rc = read(master_fd, buffer, sizeof(buffer));
       if (rc == -1 && errno != EIO) {
         perror("read");
