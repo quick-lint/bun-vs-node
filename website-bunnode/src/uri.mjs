@@ -8,7 +8,7 @@ export function makeRelativeURI(currentURI, uri) {
     return uri;
   }
   let suffix = uri.endsWith("/") ? "/" : "";
-  return path.posix.relative(currentURI, uri).replace(/\/$/, '') + suffix;
+  return path.posix.relative(currentURI, uri).replace(/\/$/, "") + suffix;
 }
 
 // quick-lint-js finds bugs in JavaScript programs.
