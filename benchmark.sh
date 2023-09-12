@@ -11,5 +11,6 @@ hyperfine \
   'cd website-node-14 && ../inaterm yarn test' \
   'cd website-node-14 && ../inaterm node run-tests.mjs' \
   'cd website-node-20 && ../inaterm node --test' \
+  'cd website-bunmine && ../inaterm bun run run-tests.mjs' \
   'cd website-bunnode && ../inaterm bun test' \
   'cd website-bunbuns && ../inaterm bun test'
