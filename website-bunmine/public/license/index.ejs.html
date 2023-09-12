@@ -1,0 +1,170 @@
+<!---{
+"title": "quick-lint-js: license information"
+}--->
+
+<!DOCTYPE html>
+<!-- Copyright (C) 2020  Matthew "strager" Glazar -->
+<!-- See end of file for extended copyright information. -->
+<html lang="en">
+  <head>
+    <%- await include("../common-head.ejs.html") %>
+    <link href="../main.css" rel="stylesheet" />
+    <style>
+      header {
+        /* Don't do grid nonsense. We don't have a mascot or nav. */
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1><a href="..">quick-lint-js</a> license information</h1>
+    </header>
+
+    <main>
+      <h2>Software</h2>
+      <p>
+        The quick-lint-js software, including its plugins, are licensed under
+        GPL-3.0-or-later:
+      </p>
+      <blockquote>
+        <p>
+          quick-lint-js finds bugs in JavaScript programs.<br />
+          Copyright (C) 2020 Matthew "strager" Glazar
+        </p>
+
+        <p>
+          quick-lint-js is free software: you can redistribute it and/or modify
+          it under the terms of the GNU General Public License as published by
+          the Free Software Foundation, either version 3 of the License, or (at
+          your option) any later version.
+        </p>
+
+        <p>
+          quick-lint-js is distributed in the hope that it will be useful, but
+          WITHOUT ANY WARRANTY; without even the implied warranty of
+          MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+          General Public License for more details.
+        </p>
+
+        <p>
+          You should have received a copy of the GNU General Public License
+          along with quick-lint-js. If not, see
+          <a href="https://www.gnu.org/licenses/"
+            >https://www.gnu.org/licenses/</a
+          >.
+        </p>
+      </blockquote>
+
+      <h2>Website</h2>
+      <p>quick-lint-js' website is licensed under GPL-3.0-or-later:</p>
+      <blockquote>
+        <p>
+          quick-lint-js finds bugs in JavaScript programs.<br />
+          Copyright (C) 2020 Matthew "strager" Glazar
+        </p>
+
+        <p>
+          This program is free software: you can redistribute it and/or modify
+          it under the terms of the GNU General Public License as published by
+          the Free Software Foundation, either version 3 of the License, or (at
+          your option) any later version.
+        </p>
+
+        <p>
+          This program is distributed in the hope that it will be useful, but
+          WITHOUT ANY WARRANTY; without even the implied warranty of
+          MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+          General Public License for more details.
+        </p>
+
+        <p>
+          You should have received a copy of the GNU General Public License
+          along with this program. If not, see
+          <a href="https://www.gnu.org/licenses/"
+            >https://www.gnu.org/licenses/</a
+          >.
+        </p>
+      </blockquote>
+
+      <!-- TODO(strager): Also mention ../github.svg. -->
+
+      <script>
+        //<%
+        let path = await import("path");
+        let files = [
+          "../arch-linux.svg",
+          "../blue-folder.svg",
+          "../chocolatey.svg",
+          "../codespaces.png",
+          "../debian.svg",
+          "../dusty.svg",
+          "../emacs.svg",
+          "../gnome-terminal.svg",
+          "../homebrew.svg",
+          "../kate.svg",
+          "../linux.svg",
+          "../macos.svg",
+          "../merch/paypal-word.svg",
+          "../neovim.svg",
+          "../nix.svg",
+          "../notepad-plus-plus.svg",
+          "../npm.svg",
+          "../open-vsx.svg",
+          "../rust-cargo.png",
+          "../rust-crab.svg",
+          "../sublime-text.svg",
+          "../ubuntu.svg",
+          "../vim.gif",
+          "../vscode-codicon-error.svg",
+          "../vscode-codicon-warning.svg",
+          "../vscode.png",
+          "../webstorm.svg",
+          "../windows.svg",
+        ];
+        //%>
+      </script>
+
+      <ul>
+        <% for (let file of files) { %>
+        <li>
+          <a href="#<%= path.basename(file) %>"><%= path.basename(file) %></a>
+        </li>
+        <% } %>
+      </ul>
+
+      <% for (let file of files) { %>
+      <p id="<%= path.basename(file) %>">
+        quick-lint-js' website contains
+        <a href="<%= file %>"><%= path.basename(file) %></a> which has the
+        following license:
+      </p>
+      <blockquote>
+        <%- await include(path.basename(file) + ".html"); %>
+      </blockquote>
+      <% } %>
+    </main>
+
+    <footer><%- await include("../common-footer-nav.ejs.html") %></footer>
+  </body>
+</html>
+
+<!--
+quick-lint-js finds bugs in JavaScript programs.
+Copyright (C) 2020  Matthew "strager" Glazar
+
+This file is part of quick-lint-js.
+
+quick-lint-js is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+quick-lint-js is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with quick-lint-js.  If not, see <https://www.gnu.org/licenses/>.
+-->
