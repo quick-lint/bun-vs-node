@@ -16,6 +16,8 @@ import {
   VFSDirectory,
   uriAncestry,
 } from "../src/vfs.mjs";
+import { describe, it, beforeEach, afterEach, expect } from "bun:test";
+import { expectToBeRejectedWithErrorAsync } from "./util.mjs";
 
 it("uriAncestry", () => {
   expect(uriAncestry("/")).toEqual(["/"]);
@@ -237,49 +239,49 @@ describe("VFS", () => {
   describe("listed URI", () => {
     it("requires leading slash", async () => {
       fs.mkdirSync(path.join(rootPath, "dir"));
-      await expectAsync(vfs.listDirectoryAsync("dir/")).toBeRejectedWithError(
+      await expectToBeRejectedWithErrorAsync(vfs.listDirectoryAsync("dir/"), 
         MalformedDirectoryURIError
       );
-      await expectAsync(vfs.listDirectoryAsync("")).toBeRejectedWithError(
+      await expectToBeRejectedWithErrorAsync(vfs.listDirectoryAsync(""), 
         MalformedDirectoryURIError
       );
     });
 
     it("requires trailing slash", async () => {
       fs.mkdirSync(path.join(rootPath, "dir"));
-      await expectAsync(vfs.listDirectoryAsync("/dir")).toBeRejectedWithError(
+      await expectToBeRejectedWithErrorAsync(vfs.listDirectoryAsync("/dir"), 
         MalformedDirectoryURIError
       );
-      await expectAsync(vfs.listDirectoryAsync("")).toBeRejectedWithError(
+      await expectToBeRejectedWithErrorAsync(vfs.listDirectoryAsync(""), 
         MalformedDirectoryURIError
       );
     });
 
     it("disallows '.' components", async () => {
       fs.mkdirSync(path.join(rootPath, "dir"));
-      await expectAsync(vfs.listDirectoryAsync("/./")).toBeRejectedWithError(
+      await expectToBeRejectedWithErrorAsync(vfs.listDirectoryAsync("/./"), 
         MalformedDirectoryURIError
       );
-      await expectAsync(
+      await expectToBeRejectedWithErrorAsync(
         vfs.listDirectoryAsync("/dir/./")
-      ).toBeRejectedWithError(MalformedDirectoryURIError);
-      await expectAsync(
+      , MalformedDirectoryURIError);
+      await expectToBeRejectedWithErrorAsync(
         vfs.listDirectoryAsync("/./dir/")
-      ).toBeRejectedWithError(MalformedDirectoryURIError);
+      , MalformedDirectoryURIError);
     });
 
     it("disallows '..' components", async () => {
       fs.mkdirSync(path.join(rootPath, "dir"));
       fs.mkdirSync(path.join(rootPath, "otherdir"));
-      await expectAsync(vfs.listDirectoryAsync("/../")).toBeRejectedWithError(
+      await expectToBeRejectedWithErrorAsync(vfs.listDirectoryAsync("/../"), 
         MalformedDirectoryURIError
       );
-      await expectAsync(
+      await expectToBeRejectedWithErrorAsync(
         vfs.listDirectoryAsync("/dir/../")
-      ).toBeRejectedWithError(MalformedDirectoryURIError);
-      await expectAsync(
+      , MalformedDirectoryURIError);
+      await expectToBeRejectedWithErrorAsync(
         vfs.listDirectoryAsync("/dir/../otherdir/")
-      ).toBeRejectedWithError(MalformedDirectoryURIError);
+      , MalformedDirectoryURIError);
     });
   });
 
@@ -504,7 +506,7 @@ describe("VFS", () => {
         "hello world"
       );
 
-      await expectAsync(vfs.listDirectoryAsync("/dir/")).toBeRejectedWithError(
+      await expectToBeRejectedWithErrorAsync(vfs.listDirectoryAsync("/dir/"), 
         /duplicate|multiple/
       );
     });
@@ -765,7 +767,7 @@ describe("ESBuildVFSFile", () => {
     let f = new ESBuildVFSFile({
       entryPoints: [path.join(temporaryDirectory, "bad-app.js")],
     });
-    await expectAsync(f.getContentsAsync()).toBeRejectedWithError(
+    await expectToBeRejectedWithErrorAsync(f.getContentsAsync(), 
       Error,
       /Build failed with 1 error/
     );
