@@ -25,6 +25,23 @@ set -u
 diff -r website-node-14/www/ website-node-20/www/
 
 (
+    printf '===== testing website-bunmine =====\n'
+    cd website-bunmine
+    yarn install --force
+    (cd analytics && yarn install --force)
+    if ! bun run run-tests.mjs; then
+        # HACK(strager): Jasmine doesn't work right with Bun. See also hack in
+        # tools/quick-lint-js-node-test-runner/index.js.
+        if [[ "${?}" -ne 3 ]]; then
+            exit "${?}"
+        fi
+    fi
+    rm -rf www/
+    bun run build
+)
+diff -r website-node-14/www/ website-bunmine/www/
+
+(
     printf '===== testing website-bunnode =====\n'
     cd website-bunnode
     yarn install --force

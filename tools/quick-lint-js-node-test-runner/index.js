@@ -71,6 +71,11 @@ class BasicReporter {
 
       case "failed":
         // specDone should have killed the process already. But just in case...
+        if (typeof Bun !== 'undefined') {
+          // HACK(strager): Bun always gets here for some reason, even if all
+          // tests pass. See also hack in test.sh.
+          break;
+        }
         console.error(`${colors.red("ERROR")} tests failed`);
         process.exit(1);
         break;
