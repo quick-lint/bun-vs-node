@@ -4,8 +4,10 @@ set -u
 set -o pipefail
 
 cc -O3 inaterm.c -o inaterm
+# HACK(strager): --ignore-failure is there for website-bunmine. See test.sh.
 hyperfine \
-  --export-json=benchmark-website-test.json \
+  --ignore-failure \
+  --export-json=benchmark-test.json \
   --warmup=2 \
   --time-unit=millisecond \
   'cd website-node-14 && ../inaterm yarn test' \
