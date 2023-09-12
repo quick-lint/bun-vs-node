@@ -7,6 +7,7 @@ import os from "os";
 import path from "path";
 import { listenAsync, urlFromServerAddress } from "../src/net.mjs";
 import { Crawler } from "../tools/check-links.mjs";
+import { describe, it, afterEach, expect } from "bun:test";
 
 describe("check-links", () => {
   let createdServers = [];
