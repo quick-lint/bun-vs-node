@@ -16,9 +16,20 @@ let DEFAULT_PORT = 9001;
 
 export async function mainAsync() {
   let { host, port } = parseArguments(process.argv.slice(2));
-  let server = http.createServer(makeServer(websiteConfig));
-  await listenAsync(server, { host: host, port: port });
-  console.log(`Server running: ${urlFromServerAddress(server.address())}`);
+
+  let serve = makeServer(websiteConfig);
+  let server = Bun.serve({
+    fetch(request) {
+      return serve(request);
+    },
+    hostname: host,
+    port: port,
+  });
+
+  let url = new URL("http://example.com/");
+  url.hostname = server.hostname;
+  url.port = server.port;
+  console.log(`Server running: ${url}`);
 }
 
 function parseArguments(args) {

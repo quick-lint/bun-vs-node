@@ -16,38 +16,37 @@ export function makeServer({ wwwRootPath }) {
   let vfs = new VFS(wwwRootPath);
   return serve;
 
-  function serve(request, response) {
-    serveAsync(request, response).catch((error) => {
-      console.error(`error processing request: ${error.stack}`);
-      if (error instanceof MalformedDirectoryURIError) {
-        response.writeHead(404); // TODO(strager): Should this be 400 instead?
-        response.end();
-        return;
-      }
+  function serve(request) {
+    let beginTime = performance.now();
+    return serveAsync(request)
+      .catch((error) => {
+        console.error(`error processing request: ${error.stack}`);
+        if (error instanceof MalformedDirectoryURIError) {
+          return new Response("", {
+            status: 404, // TODO(strager): Should this be 400 instead?
+          });
+        }
 
-      if (response.headersSent) {
-        response.end();
-      } else {
-        response.writeHead(500);
-        response.end(error.stack);
-      }
-    });
+        return new Response(error.stack, {
+          status: 500,
+        });
+      })
+      .then((response) => {
+        let endTime = performance.now();
+        logRequestResponse(request, response, beginTime, endTime);
+        return response;
+      });
   }
 
-  async function serveAsync(request, response) {
-    logRequestResponse(request, response);
+  async function serveAsync(request) {
     if (request.method !== "GET" && request.method !== "HEAD") {
-      response.writeHead(405);
-      response.end(`bad method ${request.method}`);
-      return;
+      return new Response(`bad method ${request.method}`, {
+        status: 405,
+      });
     }
-    if (!request.url.startsWith("/")) {
-      response.writeHead(400);
-      response.end(`bad URL ${request.url}`);
-      return;
-    }
+    let url = new URL(request.url);
 
-    let requestPath = request.url.match(/^[^?]+/)[0];
+    let requestPath = url.pathname.match(/^[^?]+/)[0];
     let pathLastSlashIndex = requestPath.lastIndexOf("/");
     assert.notStrictEqual(pathLastSlashIndex, -1);
     let childName = requestPath.slice(pathLastSlashIndex + 1);
@@ -56,22 +55,27 @@ export function makeServer({ wwwRootPath }) {
     let listing = await vfs.listDirectoryAsync(directoryURI);
     let entry = listing.get(childName);
     if (entry === null || entry instanceof VFSDirectory) {
-      response.writeHead(404);
-      response.end();
+      return new Response("", {
+        status: 404,
+      });
     } else if (entry instanceof ServerConfigVFSFile) {
-      response.writeHead(403);
-      response.end();
+      return new Response("", {
+        status: 403,
+      });
     } else if (entry instanceof IndexConflictVFSError) {
-      response.writeHead(409);
-      response.end();
+      return new Response("", {
+        status: 409,
+      });
     } else {
       let headers = { "content-type": entry.getContentType() };
       let data = undefined;
       if (request.method === "GET") {
         data = await entry.getContentsAsync();
       }
-      response.writeHead(200, headers);
-      response.end(data);
+      return new Response(data, {
+        status: 200,
+        headers: headers,
+      });
     }
   }
 }
@@ -84,19 +88,15 @@ let statusToColor = {
   5: colors.red,
 };
 
-function logRequestResponse(request, response) {
-  let beginTime = performance.now();
-  response.on("finish", () => {
-    let endTime = performance.now();
-    let durationMilliseconds = endTime - beginTime;
-    let statusColor =
-      statusToColor[Math.floor(response.statusCode / 100)] ?? colors.red;
-    console.log(
-      `${request.method} ${request.url} ${statusColor(
-        response.statusCode
-      )} ${durationMilliseconds.toFixed(2)} ms`
-    );
-  });
+function logRequestResponse(request, response, beginTime, endTime) {
+  let durationMilliseconds = endTime - beginTime;
+  let statusColor =
+    statusToColor[Math.floor(response.status / 100)] ?? colors.red;
+  console.log(
+    `${request.method} ${new URL(request.url).pathname} ${statusColor(
+      response.status
+    )} ${durationMilliseconds.toFixed(2)} ms`
+  );
 }
 
 // quick-lint-js finds bugs in JavaScript programs.

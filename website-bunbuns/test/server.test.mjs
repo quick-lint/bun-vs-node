@@ -2,7 +2,6 @@
 // See end of file for extended copyright information.
 
 import fs from "fs";
-import http from "http";
 import os from "os";
 import path from "path";
 import { describe, it, beforeEach, afterEach, expect } from "bun:test";
@@ -17,26 +16,36 @@ describe("server", () => {
   beforeEach(async () => {
     wwwRootPath = fs.mkdtempSync(os.tmpdir() + path.sep);
 
-    server = http.createServer(
-      makeServer({
-        wwwRootPath: wwwRootPath,
-      })
-    );
-    await listenAsync(server, { host: "localhost", port: 0 });
+    let serve = makeServer({
+      wwwRootPath: wwwRootPath,
+    });
+    server = Bun.serve({
+      fetch(request) {
+        return serve(request);
+      },
+      hostname: "localhost",
+      port: 0,
+    });
 
-    let serverAddress = server.address();
     request = async (method, path) => {
-      return await httpRequestAsync({
+      let url = new URL("http://example.com/");
+      url.hostname = server.hostname;
+      url.port = server.port;
+      url = new URL(path, url);
+
+      let response = await fetch(url.toString(), {
         method: method,
-        path: path,
-        host: serverAddress.address,
-        port: serverAddress.port,
       });
+      return {
+        status: response.status,
+        data: await response.text(),
+        headers: Object.fromEntries(response.headers.entries()),
+      };
     };
   });
 
   afterEach(async () => {
-    server.close();
+    server.stop();
     fs.rmSync(wwwRootPath, { recursive: true });
   });
 
@@ -715,32 +724,6 @@ describe("server", () => {
     });
   });
 });
-
-function httpRequestAsync(options) {
-  return new Promise((resolve, reject) => {
-    let req = http.request(options, (res) => {
-      res.setEncoding("utf8");
-      let responseBody = "";
-      res.on("data", (chunk) => {
-        responseBody += chunk;
-      });
-      res.on("end", () => {
-        resolve({
-          status: res.statusCode,
-          data: responseBody,
-          headers: res.headers,
-        });
-      });
-      res.on("error", (err) => {
-        reject(err);
-      });
-    });
-    req.on("error", (err) => {
-      reject(err);
-    });
-    req.end();
-  });
-}
 
 // quick-lint-js finds bugs in JavaScript programs.
 // Copyright (C) 2020  Matthew "strager" Glazar
