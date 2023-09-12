@@ -35,6 +35,12 @@ async function loadNavSubpageAndSubsubpagesAsync({ root, uri }) {
   let directories = await fs.promises.readdir(path.join(root, uri), {
     withFileTypes: true,
   });
+  // NOTE(strager): This makes Node.js and Bun deterministic.
+  directories.sort((a, b) => {
+    if (a.name < b.name) return -1;
+    if (a.name > b.name) return +1;
+    return 0;
+  });
   directories = directories.filter((dir) => dir.isDirectory());
   let subsubpages = await Promise.all(
     directories.map(async (dir) => ({
