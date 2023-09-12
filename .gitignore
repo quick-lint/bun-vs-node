@@ -1,2 +1,4 @@
 /benchmark-*.json
 /inaterm
+/server.log
+/server.pid
