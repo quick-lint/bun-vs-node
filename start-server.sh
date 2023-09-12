@@ -5,6 +5,10 @@ set -o pipefail
 
 here="$(dirname "${0}")"
 
+setsid() {
+    exec perl -e 'use POSIX qw(setsid); setsid(); exec @ARGV;' "${@}"
+}
+
 wait_for_server_start() {
   while ! curl --silent -o /dev/null http://localhost:9001/ ; do
     sleep 0.1
