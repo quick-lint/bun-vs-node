@@ -22,7 +22,7 @@ set -u
     rm -rf www/
     yarn build
 )
-diff -r website-node-14/www/ website-node-20/www/
+diff -U2 -r website-node-14/www/ website-node-20/www/
 
 (
     printf '===== testing website-bunmine =====\n'
@@ -37,9 +37,9 @@ diff -r website-node-14/www/ website-node-20/www/
         fi
     fi
     rm -rf www/
-    bun --bun run build
+    bun --bun run run-build.mjs www
 )
-diff -r website-node-14/www/ website-bunmine/www/
+diff -U2 -r website-node-14/www/ website-bunmine/www/
 
 (
     printf '===== testing website-bunnode =====\n'
@@ -48,9 +48,9 @@ diff -r website-node-14/www/ website-bunmine/www/
     (cd analytics && yarn install --force)
     bun test
     rm -rf www/
-    bun --bun run build
+    bun --bun run run-build.mjs www
 )
-diff -r website-node-14/www/ website-bunnode/www/
+diff -U2 -r website-node-14/www/ website-bunnode/www/
 
 (
     printf '===== testing website-bunbuns =====\n'
@@ -59,6 +59,6 @@ diff -r website-node-14/www/ website-bunnode/www/
     (cd analytics && bun install --yarn)
     bun test
     rm -rf www/
-    bun --bun run build
+    bun --bun run run-build.mjs www
 )
-diff -r website-node-14/www/ website-bunbuns/www/
+diff -U2 -r website-node-14/www/ website-bunbuns/www/
