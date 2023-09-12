@@ -1,6 +1,6 @@
 /benchmark-*.csv
 /benchmark-*.json
-/benchmark-reload-server
+/benchmark-reload
 /inaterm
 /server.log
 /server.pid

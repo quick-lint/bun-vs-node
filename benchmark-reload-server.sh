@@ -3,19 +3,28 @@ set -e
 set -u
 set -o pipefail
 
-cc -O3 benchmark-reload-server.c -o benchmark-reload-server
+cc -O3 benchmark-reload.c -o benchmark-reload
 
-./benchmark-reload-server \
+./benchmark-reload \
   website-node-20/src/config.mjs \
+  'Server running:' \
+  '' \
+  100 \
   sh -c 'cd website-node-20 && node run-server.mjs' \
   >benchmark-reload-server-chokidar.csv
 
-./benchmark-reload-server \
+./benchmark-reload \
   website-node-20/src/config.mjs \
+  'Server running:' \
+  '' \
+  100 \
   sh -c 'cd website-node-20 && node --watch run-server-worker.mjs' \
   >benchmark-reload-server-node-20.csv
 
-./benchmark-reload-server \
+./benchmark-reload \
   website-bunbuns/src/config.mjs \
+  'Server running:' \
+  '' \
+  100 \
   sh -c 'cd website-bunbuns && bun run --watch run-server-worker.mjs' \
   >benchmark-reload-server-bunbuns.csv

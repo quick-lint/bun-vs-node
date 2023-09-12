@@ -12,6 +12,8 @@
 #include <time.h>
 #include <unistd.h>
 
+static const bool debug = false;
+
 static long long timespec_to_us(struct timespec ts) {
   return ((long long)ts.tv_sec * 1000*1000) + (long long)ts.tv_nsec / 1000;
 }
@@ -25,29 +27,40 @@ static void log_times(struct timespec before, struct timespec after) {
   printf("%lld us\n", sample);
 }
 
+static char data[64*1024];
+static size_t bytes_read = 0;
+
 static bool wait_for_message(int fd, const char* message) {
   size_t message_size = strlen(message);
+  if (message_size == 0) {
+    return true;
+  }
 
-  char data[64*1024];
-  size_t bytes_read = 0;
-read_again:
+try_again:
+  if (memmem(data, bytes_read, message, message_size) != NULL) {
+    return true;
+  }
   ssize_t rc = read(fd, data + bytes_read, sizeof(data) - bytes_read);
   if (rc == -1) {
     perror("read");
     exit(1);
   }
+  if (debug) {
+    write(STDERR_FILENO, data + bytes_read, rc);
+  }
   if (rc == 0) {
     return false;
   }
   bytes_read += rc;
-  if (memmem(data, bytes_read, message, message_size) != NULL) {
-    return true;
-  }
-  goto read_again;
+  goto try_again;
 }
 
 int main(int argc, char** argv) {
   const char* file_to_touch = argv[1];
+  const char* stop_timing_message = argv[2];
+  const char* restart_message = argv[3];
+  int sample_count = atoi(argv[4]);
+
   int master_fd;
   pid_t child_pid = forkpty(&master_fd, NULL, NULL, NULL);
   if (child_pid == -1) {
@@ -56,14 +69,16 @@ int main(int argc, char** argv) {
   }
   if (child_pid == 0) {
     // child
-    execvp(argv[2], &argv[2]);
+    execvp(argv[5], &argv[5]);
     puts("execvp");
     exit(1);
   } else {
     // parent
-    wait_for_message(master_fd, "Server running:");
+    wait_for_message(master_fd, stop_timing_message);
+    wait_for_message(master_fd, restart_message);
+    bytes_read = 0;
 
-    for (int i = 0; i < 50; ++i) {
+    for (int i = 0; i < sample_count; ++i) {
       int file_fd = open(file_to_touch, O_RDWR);
       if (file_fd == -1) {
         perror("open");
@@ -73,10 +88,12 @@ int main(int argc, char** argv) {
       clock_gettime(CLOCK_MONOTONIC, &before_write);
       write(file_fd, "/", 1);
       close(file_fd);
-      wait_for_message(master_fd, "Server running:");
+      wait_for_message(master_fd, stop_timing_message);
       struct timespec after_rerun;
       clock_gettime(CLOCK_MONOTONIC, &after_rerun);
       log_times(before_write, after_rerun);
+      wait_for_message(master_fd, restart_message);
+      bytes_read = 0;
       usleep(10 * 1000);
     }
 
