@@ -22,6 +22,8 @@
 
 static const bool debug = false;
 
+static const char* series = "";
+
 static long long timespec_to_us(struct timespec ts) {
   return ((long long)ts.tv_sec * 1000*1000) + (long long)ts.tv_nsec / 1000;
 }
@@ -32,7 +34,7 @@ static void log_times(struct timespec before, struct timespec after) {
   long long sample = timespec_to_us(after) - timespec_to_us(before);
   total_us += sample;
   log_count += 1;
-  printf("%lld us\n", sample);
+  printf("%s,%lld\n", series, sample);
 }
 
 static char data[64*1024];
@@ -64,10 +66,11 @@ try_again:
 }
 
 int main(int argc, char** argv) {
-  const char* file_to_touch = argv[1];
-  const char* stop_timing_message = argv[2];
-  const char* restart_message = argv[3];
-  int sample_count = atoi(argv[4]);
+  series = argv[1];
+  const char* file_to_touch = argv[2];
+  const char* stop_timing_message = argv[3];
+  const char* restart_message = argv[4];
+  int sample_count = atoi(argv[5]);
 
   int master_fd;
   pid_t child_pid = forkpty(&master_fd, NULL, NULL, NULL);
@@ -77,7 +80,7 @@ int main(int argc, char** argv) {
   }
   if (child_pid == 0) {
     // child
-    execvp(argv[5], &argv[5]);
+    execvp(argv[6], &argv[6]);
     puts("execvp");
     exit(1);
   } else {
@@ -107,6 +110,6 @@ int main(int argc, char** argv) {
 
     kill(child_pid, SIGTERM);
 
-    fprintf(stderr, "avg: %lld us\n", total_us / log_count);
+    fprintf(stderr, "%s avg: %lld us\n", series, total_us / log_count);
   }
 }
