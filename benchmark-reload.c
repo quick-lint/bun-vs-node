@@ -2,7 +2,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <poll.h>
-#include <pty.h>
+#include <signal.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,6 +11,14 @@
 #include <sys/wait.h>
 #include <time.h>
 #include <unistd.h>
+
+#if defined(__APPLE__)
+#include <util.h>
+#endif
+
+#if defined(__linux__)
+#include <pty.h>
+#endif
 
 static const bool debug = false;
 
