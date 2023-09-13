@@ -16,12 +16,14 @@ rsync -a --delete website-node-20/analytics/ qljs-analytics@c.quick-lint-js.com:
 rsync -a --delete website-bunbuns/analytics/ qljs-analytics@c.quick-lint-js.com:bun-vs-node-bunbuns/
 
 ssh qljs-analytics@c.quick-lint-js.com '
+  rm -f bun-vs-node-node-20/config.json
   sed \
     -e "/db\.file/s;.*;\"db.file\": \"/home/qljs-analytics/analytics-bun-vs-node-node-20.sqlite3\",;" \
     -e "/chart\.directory/s;.*;\"chart.directory\": \"/var/www/admin.quick-lint-js.com/analytics-bun-vs-node-node-20/\",;" \
     quick-lint-js-website-analytics/config.json \
     >bun-vs-node-node-20/config.json
 
+  rm -f bun-vs-node-bunbuns/config.json
   sed \
     -e "/db\.file/s;.*;\"db.file\": \"/home/qljs-analytics/analytics-bun-vs-node-bunbuns.sqlite3\",;" \
     -e "/chart\.directory/s;.*;\"chart.directory\": \"/var/www/admin.quick-lint-js.com/analytics-bun-vs-node-bunbuns/\",;" \
