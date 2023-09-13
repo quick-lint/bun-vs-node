@@ -2,22 +2,22 @@ import puppeteer from 'puppeteer';
 
 let pagesToTest = [
   // some SVG, some JS
-  'http://127.0.0.1:9001/',
+  'http://localhost:9001/',
 
   // more JS
-  'http://127.0.0.1:9001/demo/',
+  'http://localhost:9001/demo/',
 
   // lots of SVG
-  'http://127.0.0.1:9001/blog/cpp-vs-rust-build-times/',
+  'http://localhost:9001/blog/cpp-vs-rust-build-times/',
 
   // Asciidoc (Opal)
-  'http://127.0.0.1:9001/cli/',
+  'http://localhost:9001/cli/',
 
   // Markdown
-  'http://127.0.0.1:9001/releases/',
+  'http://localhost:9001/releases/',
 
   // basically no server code
-  'http://127.0.0.1:9001/merch/',
+  'http://localhost:9001/merch/',
 ];
 
 async function mainAsync() {
