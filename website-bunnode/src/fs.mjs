@@ -16,7 +16,7 @@ let execFileAsync = util.promisify(child_process.execFile);
 export async function readFileAsync(filePath, encoding) {
   if (
     !(await isSymlinkInFileSystemAsync(filePath)) &&
-    (await isSymlinkInGitAsync(filePath))
+    false // (await isSymlinkInGitAsync(filePath))
   ) {
     let symlinkPath = await fs.promises.readFile(filePath, "utf-8");
     let targetPath = path.join(path.dirname(filePath), symlinkPath);

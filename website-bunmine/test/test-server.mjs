@@ -502,18 +502,24 @@ describe("server", () => {
       expect(response.status).toBe(404);
     });
 
-    pending("/subdir/../test.js should 404 even if /subdir/ and /test.js both work", async () => {
-      fs.mkdirSync(path.join(wwwRootPath, "subdir"));
-      fs.writeFileSync(path.join(wwwRootPath, "test.js"), "hello()");
-      fs.writeFileSync(
-        path.join(wwwRootPath, "subdir", "index.html"),
-        "hello world"
-      );
-      fs.writeFileSync(path.join(wwwRootPath, "subdir", "test.js"), "hello()");
+    pending(
+      "/subdir/../test.js should 404 even if /subdir/ and /test.js both work",
+      async () => {
+        fs.mkdirSync(path.join(wwwRootPath, "subdir"));
+        fs.writeFileSync(path.join(wwwRootPath, "test.js"), "hello()");
+        fs.writeFileSync(
+          path.join(wwwRootPath, "subdir", "index.html"),
+          "hello world"
+        );
+        fs.writeFileSync(
+          path.join(wwwRootPath, "subdir", "test.js"),
+          "hello()"
+        );
 
-      let response = await request("GET", "/subdir/../test.js");
-      expect(response.status).toBe(404);
-    });
+        let response = await request("GET", "/subdir/../test.js");
+        expect(response.status).toBe(404);
+      }
+    );
   });
 
   describe("node_modules", () => {
