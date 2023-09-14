@@ -7,6 +7,9 @@ clear_fs_cache='echo 3 | sudo tee /proc/sys/vm/drop_caches'
 warm_yarn_package_cache='find ~/.cache/yarn/ -type f -exec cat "{}" \+ >/dev/null'
 warm_bun_package_cache='find ~/.bun/install/cache/ -type f -exec cat "{}" \+ >/dev/null'
 
+(cd website-node-20 && yarn install)
+(cd website-bunbuns && bun install)
+
 hyperfine \
   --export-json=benchmark-package-install-ci-warm-website.json \
   --warmup=2 \
