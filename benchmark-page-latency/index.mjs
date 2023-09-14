@@ -33,7 +33,7 @@ async function mainAsync() {
     const page = await browser.newPage();
     await page.setViewport({width: 1920, height: 1080});
 
-    let pids = await getServerProcessIDsAsync();
+    let pids = process.platform === 'linux' ? await getServerProcessIDsAsync() : [];
     running = true;
     await Promise.all([benchmarkAsync(page), logMemoryUsageAsync(pids)]);
   } finally {
