@@ -1,0 +1,243 @@
+<!---{
+"title": "Faster, easier, friendlier: how quick-lint-js will take over ESLint",
+"linkLabelHTML": "Release: version 1.0",
+"description": "Faster, easier, friendlier: how quick-lint-js will take over ESLint",
+"navTitle": "Release 1.0",
+"blogDate": "2021-12-13T19:27:37-08:00"
+}--->
+
+<!DOCTYPE html>
+<!-- Copyright (C) 2020  Matthew "strager" Glazar -->
+<!-- See end of file for extended copyright information. -->
+<html>
+  <head>
+    <%- await include("../../common-head.ejs.html") %> <%- await
+    include("../blog-head.ejs.html") %>
+    <link href="../../main.css" rel="stylesheet" />
+  </head>
+  <body>
+    <% function callsToAction() { %>
+    <ul class="install-options">
+      <li>
+        <a href="../../install/"
+          ><qljs-icon name="quick-lint-js-small" size="19" /> install
+          quick-lint-js</a
+        >
+      </li>
+      <li><a href="../../demo/">🌐 try in your browser</a></li>
+      <li>
+        <a href="https://github.com/quick-lint/quick-lint-js"
+          ><qljs-icon name="github" size="19" /> code on GitHub</a
+        >
+      </li>
+    </ul>
+    <% } %>
+
+    <header><%- await include("../../common-nav.ejs.html") %></header>
+
+    <main>
+      <h1>
+        Faster, easier, friendlier: how quick-lint-js will take over ESLint
+      </h1>
+      <p><qljs-date datetime="<%= meta.blogDate %>" /></p>
+
+      <p>
+        ESLint finds bugs. Or does it? ESLint is so slow that you don't bother
+        until you make a PR. So what's the point?
+      </p>
+
+      <p>
+        quick-lint-js is different. Instantly find bugs in JavaScript, right in
+        your editor. Waste less time fiddling with ESLint plugins and configs
+        and more time tweaking margins and rounded corners.
+      </p>
+
+      <p>We are proud to announce version 1.0 of quick-lint-js!</p>
+
+      <%- callsToAction() %>
+
+      <p>Notable quick-lint-js features:</p>
+      <ul>
+        <li>
+          Over <a href="../../benchmarks/">110 times faster</a> than ESLint,
+          Flow, and TypeScript
+        </li>
+        <li>
+          <a href="../../install/vscode/"
+            ><qljs-icon name="vscode" class="inline-logo" size="19" /> VS
+            Code</a
+          >,
+          <a href="../../install/emacs/"
+            ><qljs-icon name="emacs" class="inline-logo" size="19" /> Emacs</a
+          >,
+          <a href="../../install/vim/"
+            ><qljs-icon name="vim" class="inline-logo" size="19" /> Vim</a
+          >, and
+          <a href="../../install/neovim/"
+            ><qljs-icon name="neovim" class="inline-logo" size="19" /> Neovim</a
+          >
+          plugins
+        </li>
+        <li>Documented <a href="../../errors/">errors with examples</a></li>
+        <li>
+          Instant setup; no config required (no
+          <code>npx eslint --init</code> every. single. project)
+        </li>
+        <li>World's fastest JavaScript editor plugin 🚀🚀🚀</li>
+        <li>Better error reporting than ESLint for syntax errors</li>
+      </ul>
+
+      <figure>
+        <picture
+          style="width: 100%; height: auto"
+          width="1324"
+          height="526"
+          title="quick-lint-js running in Visual Studio Code"
+        >
+          <source srcset="../../vscode-demo.webp" type="image/webp" />
+          <img
+            src="../../vscode-demo.png"
+            style="width: 100%; height: auto"
+            alt="quick-lint-js running in Visual Studio Code"
+            width="1324"
+            height="526"
+          />
+        </picture>
+      </figure>
+
+      <p>How does quick-lint-js compare to ESLint? See for yourself:</p>
+      <div class="eslint-comparison">
+        <figure style="grid-area: eslint">
+          <figcaption>ESLint</figcaption>
+          <div class="example">
+            <pre><code class="javascript">function getDefaultConfig() {
+  return
+  {
+    dbHost: "localhost",
+  <mark data-message="Parsing error: Unexpected token }" data-severity="error">}</mark>;
+}</code></pre>
+            <p>Parsing error: Unexpected token }</p>
+          </div>
+        </figure>
+        <figure style="grid-area: qljs">
+          <figcaption>quick-lint-js</figcaption>
+          <div class="example">
+            <pre><code class="javascript">function getDefaultConfig() {
+  <mark data-code="E0179" data-message="return statement returns nothing (undefined)" data-severity="error">return</mark>
+  {
+    dbHost: "localhost",
+  };
+}</code></pre>
+            <p>
+              return statement returns nothing (undefined)&nbsp;[<a
+                href="../../errors/E0179/"
+                >E0179</a
+              >]
+            </p>
+          </div>
+        </figure>
+      </div>
+
+      <div class="eslint-comparison">
+        <figure style="grid-area: eslint">
+          <figcaption>ESLint</figcaption>
+          <div class="example">
+            <pre><code class="javascript">app.get("/", await (req, res) <mark data-message="Parsing error: Unexpected token =>" data-severity="error">=</mark>&gt; {
+  await doHomePage(req, res);
+});</code></pre>
+            <p>Parsing error: Unexpected token =&gt;</p>
+          </div>
+        </figure>
+        <figure style="grid-area: qljs">
+          <figcaption>quick-lint-js</figcaption>
+          <div class="example">
+            <pre><code class="javascript">app.get("/", <mark data-code="E0178" data-message="'await' cannot be followed by an arrow function; use 'async' instead" data-severity="error">await</mark> (req, res) =&gt; {
+  await doHomePage(req, res);
+});</code></pre>
+            <p>
+              'await' cannot be followed by an arrow function; use 'async'
+              instead&nbsp;[<a href="../../errors/E0178/">E0178</a>]
+            </p>
+          </div>
+        </figure>
+      </div>
+
+      <div class="eslint-comparison">
+        <figure style="grid-area: eslint">
+          <figcaption>ESLint</figcaption>
+          <div class="example">
+            <pre><code class="javascript">function readConfig(configFilePath) {
+  let data = await <mark data-message="Parsing error: Unexpected token readFile" data-severity="error">readFile</mark>(configFilePath);
+  return parseConfig(data);
+}</code></pre>
+            <p>Parsing error: Unexpected token readFile</p>
+          </div>
+        </figure>
+        <figure style="grid-area: qljs">
+          <figcaption>quick-lint-js</figcaption>
+          <div class="example">
+            <pre><code class="javascript">function readConfig(configFilePath) {
+  let data = <mark data-code="E0162" data-message="'await' is only allowed in async functions" data-severity="error">await</mark> readFile(configFilePath);
+  return parseConfig(data);
+}</code></pre>
+            <p>
+              'await' is only allowed in async functions [<a
+                href="../../errors/E0162/"
+                >E0162</a
+              >]
+            </p>
+          </div>
+        </figure>
+      </div>
+
+      <p>
+        What should we work on next?
+        <a href="https://github.com/quick-lint/quick-lint-js/issues/327"
+          >Suggest features for quick-lint-js.</a
+        >
+      </p>
+
+      <p>
+        quick-lint-js was born on <time>March 31, 2020</time>, after
+        frustrations with ESLint and Flow. 20 months and 2700 patches later,
+        quick-lint-js is finally ready for beginners and experts alike. Through
+        our <a href="../../hiring/">hiring program</a>, we have paid
+        <strong>311 USD</strong> to contributors.
+        <a
+          href="https://github.com/quick-lint/quick-lint-js/blob/1.0.0/docs/AUTHORS.md"
+          >36 people</a
+        >
+        made quick-lint-js possible.
+      </p>
+
+      <%- callsToAction() %>
+
+      <p>
+        Written by <a href="https://strager.net/contact.html">strager</a>, lead
+        developer of quick-lint-js.
+      </p>
+
+      <script src="../../error-box.bundled.js"></script>
+    </main>
+  </body>
+</html>
+
+<!--
+quick-lint-js finds bugs in JavaScript programs.
+Copyright (C) 2020  Matthew "strager" Glazar
+
+This file is part of quick-lint-js.
+
+quick-lint-js is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+quick-lint-js is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with quick-lint-js.  If not, see <https://www.gnu.org/licenses/>.
+-->

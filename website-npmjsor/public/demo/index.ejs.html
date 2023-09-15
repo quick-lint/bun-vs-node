@@ -1,0 +1,158 @@
+<!---{
+"title": "Try quick-lint-js in your browser"
+}--->
+
+<!DOCTYPE html>
+<!-- Copyright (C) 2020  Matthew "strager" Glazar -->
+<!-- See end of file for extended copyright information. -->
+<html>
+  <head>
+    <%- await include("../common-head.ejs.html") %>
+    <link href="../main.css" rel="stylesheet" />
+    <style>
+      /* Make #code-input and #shadow-code-input have the same size. */
+      main {
+        position: relative;
+      }
+      .code-view {
+        width: 100%;
+        height: 20em;
+      }
+
+      /* Normalize #code-input, #code-input-marks-scroller, and
+         #shadow-code-input to have the internal layout. */
+      .code-view {
+        border: 0;
+        box-sizing: border-box;
+        font-family: monospace;
+        font-size: 1rem;
+        line-height: 1em;
+        margin: 0;
+        overflow: scroll;
+        padding: 3px;
+        white-space: pre;
+      }
+
+      #code-input-marks {
+        margin: 0;
+        padding: 0;
+      }
+
+      /* Show #code-input-marks-scroller visually behind #code-input. */
+      #code-input {
+        background: transparent;
+        position: relative;
+        z-index: 2;
+        outline: none;
+      }
+      #code-input-marks-scroller {
+        color: transparent;
+        z-index: 1;
+        /* !important is required because codegrepper extension adds position:relative
+        the html tag and breaks the demo */
+        position: absolute !important;
+        padding: 0;
+      }
+
+      /* Hide #shadow-code-input, but ensure its layout is accessible from
+         JavaScript. */
+      #shadow-code-input {
+        /* !important is required because codegrepper extension adds position:relative
+        the html tag and breaks the demo */
+        position: absolute !important;
+        visibility: hidden;
+      }
+
+      /* Don't show duplicate scroll bars. */
+      #code-input-marks-scroller {
+        overflow: hidden;
+      }
+
+      #code-input-marks-scroller {
+        background-color: rgba(0, 0, 0, 0.05);
+      }
+
+      .floating-mark {
+        position: absolute;
+      }
+
+      footer {
+        border-top: 0;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        #code-input {
+          color: white;
+        }
+
+        #code-input-marks-scroller {
+          background-color: rgba(0, 0, 0, 0.2);
+        }
+      }
+    </style>
+  </head>
+  <body class="side-bar-nav">
+    <!--
+    Known bugs:
+
+    * Empty marks (indicating missing semicolons) are practically invisible
+      on Chrome due to its thick underline.
+    * Overscrolling on macOS has visual issues.
+    * Scrolling in general works poorly when sub-pixel scrolling (e.g. when
+      zoomed in).
+    * Scrolling horizontally sometimes doesn't scroll the highlights.
+    * Browser text search finds text in the shadow code input in addition to
+      text in the user code input.
+
+    -->
+
+    <header><%- await include("../common-nav.ejs.html") %></header>
+
+    <main>
+      <h1>Demo</h1>
+
+      <p>
+        See how quick-lint-js works right here in your browser! Paste your
+        favorite buggy JavaScript code below:
+      </p>
+
+      <pre class="code-view" id="shadow-code-input"></pre>
+      <pre
+        class="code-view"
+        id="code-input-marks-scroller"
+      ><pre id="code-input-marks"></pre></pre>
+      <textarea class="code-view" id="code-input" spellcheck="false">
+const occupation = language + " coder";
+const language = "JavaScript";
+occupation = "Senior " + occupation;
+
+console.log(`Welcome, ${ocupation}!`);
+</textarea
+      >
+
+      <script src="demo.bundled.js"></script>
+    </main>
+
+    <footer><%- await include("../common-footer-nav.ejs.html") %></footer>
+  </body>
+</html>
+
+<!--
+quick-lint-js finds bugs in JavaScript programs.
+Copyright (C) 2020  Matthew "strager" Glazar
+
+This file is part of quick-lint-js.
+
+quick-lint-js is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+quick-lint-js is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with quick-lint-js.  If not, see <https://www.gnu.org/licenses/>.
+-->
