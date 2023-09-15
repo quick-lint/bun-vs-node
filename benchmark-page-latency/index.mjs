@@ -10,7 +10,7 @@ let pagesToTest = [
   'http://localhost:9001/',
 
   // more JS
-  'http://localhost:9001/demo/',
+  //'http://localhost:9001/demo/',
 
   // lots of SVG
   'http://localhost:9001/blog/cpp-vs-rust-build-times/',
@@ -19,10 +19,10 @@ let pagesToTest = [
   'http://localhost:9001/cli/',
 
   // Markdown
-  'http://localhost:9001/releases/',
+  //'http://localhost:9001/releases/',
 
   // basically no server code
-  'http://localhost:9001/merch/',
+  //'http://localhost:9001/merch/',
 ];
 
 let running = false;
@@ -49,7 +49,7 @@ async function getServerProcessIDsAsync() {
 
 async function benchmarkAsync(page) {
   try {
-    for (let i = 0; i < 30; ++i) {
+    for (let i = 0; i < 200; ++i) {
       for (let url of pagesToTest) {
         await sleepAsync(100);
         let before = performance.now();
